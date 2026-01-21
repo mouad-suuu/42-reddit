@@ -1,8 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
-import { getAuthUser, isAdmin } from "@/lib/auth";
+import { getAuthUser } from "@/lib/auth";
+import { ThemeToggle } from "./theme-toggle";
 
+/**
+ * Server-side navigation header for 42 Reddit.
+ * Displays branding, nav links, and user auth state.
+ */
 export async function NavHeader() {
   const authUser = await getAuthUser();
   const user = authUser ? { id: authUser.id } : null;
@@ -13,21 +18,9 @@ export async function NavHeader() {
       <nav className="container mx-auto flex h-16 items-center justify-between px-6">
         <Link href="/" className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center border-2 border-border bg-card">
-            <svg
-              className="h-5 w-5 text-foreground"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
-              />
-            </svg>
+            <span className="text-lg font-bold">42</span>
           </div>
-          <span className="text-xl font-bold font-display text-foreground">Praxis</span>
+          <span className="text-xl font-bold font-display text-foreground">Reddit</span>
         </Link>
 
         {/* Nav links */}
@@ -39,7 +32,7 @@ export async function NavHeader() {
             HOME
           </Link>
           <Link
-            href="/projects"
+            href="/42-projects"
             className="text-sm font-bold transition-colors uppercase tracking-widest text-muted-foreground hover:text-foreground"
           >
             PROJECTS
@@ -55,35 +48,21 @@ export async function NavHeader() {
         </div>
 
         <div className="flex items-center gap-4">
+          <ThemeToggle />
           {user && profile ? (
             <>
               <div className="hidden items-center gap-2 sm:flex">
-                <span className="text-sm text-muted-foreground font-bold">
-                  LVL {profile.level}
+                <span className="text-xs text-muted-foreground font-mono">
+                  @{profile.intraLogin}
                 </span>
               </div>
-              {isAdmin(authUser) && (
-                <Button
-                  asChild
-                  size="sm"
-                  variant="outline"
-                >
-                  <Link href="/projects/create">+ CREATE</Link>
-                </Button>
-              )}
               <Link href="/profile">
                 <Avatar className="h-9 w-9 manga-shadow-sm">
                   <AvatarImage
-                    src={
-                      profile.intra_image_url ||
-                      profile.avatar_url ||
-                      "/placeholder.svg"
-                    }
+                    src={profile.avatarUrl || "/placeholder.svg"}
                   />
                   <AvatarFallback>
-                    {(profile.intra_login || profile.username)
-                      ?.slice(0, 2)
-                      .toUpperCase()}
+                    {profile.intraLogin?.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
               </Link>

@@ -10,7 +10,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { useTheme } from "@/contexts/ThemeContext";
 
 export function NavHeaderClient() {
-  const { user, authenticated, loading, login } = useAuth();
+  const { user, authenticated, loading } = useAuth();
   const { theme } = useTheme();
   
   const logoSrc = theme === "cyberpunk" ? "/Praxis_cyberpunk.png" : "/Praxis_manga.png";
@@ -38,7 +38,7 @@ export function NavHeaderClient() {
             <span className={`font-display font-bold text-2xl tracking-wider ${
               isCyberpunk ? "text-white" : "text-foreground"
             }`}>
-              Praxis
+              42 Reddit
             </span>
           </Link>
           <div className="hidden md:block">
@@ -67,33 +67,35 @@ export function NavHeaderClient() {
             ) : authenticated && user ? (
               <>
                 <div className="hidden md:flex flex-col items-end mr-2">
+                  <span className={`text-sm font-medium ${
+                    isCyberpunk ? "text-white" : "text-foreground"
+                  }`}>
+                    {user.profile?.displayName || user.username}
+                  </span>
+                  {user.profile?.campus && (
+                    <span className={`text-xs ${
+                      isCyberpunk ? "text-gray-400" : "text-muted-foreground"
+                    }`}>
+                      {user.profile.campus}
+                    </span>
+                  )}
                 </div>
    
-                <Link href="/profile">
-                  <Avatar className={`h-9 w-9 cursor-pointer ${
-                    isCyberpunk 
-                      ? "border border-gray-600 overflow-hidden" 
-                      : "theme-shadow-sm"
-                  }`}>
-                    <AvatarImage
-                      src={
-                        user.profile?.intra_image_url ||
-                        user.profile?.avatar_url ||
-                        "/placeholder.svg"
-                      }
-                      alt={user.profile?.display_name || user.username}
-                    />
-                    <AvatarFallback className={isCyberpunk ? "bg-gray-700 border border-gray-600" : undefined}>
-                      {(
-                        user.profile?.intra_login ||
-                        user.profile?.display_name ||
-                        user.username
-                      )
-                        ?.slice(0, 2)
-                        .toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                </Link>
+                <Avatar className={`h-9 w-9 cursor-pointer ${
+                  isCyberpunk 
+                    ? "border border-gray-600 overflow-hidden" 
+                    : "theme-shadow-sm"
+                }`}>
+                  <AvatarImage
+                    src={user.profile?.avatarUrl || "/placeholder.svg"}
+                    alt={user.profile?.displayName || user.username}
+                  />
+                  <AvatarFallback className={isCyberpunk ? "bg-gray-700 border border-gray-600" : undefined}>
+                    {(user.profile?.intraLogin || user.username)
+                      ?.slice(0, 2)
+                      .toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
               </>
             ) : (
               <Button

@@ -8,19 +8,20 @@ import React, {
   ReactNode,
 } from "react";
 
+interface UserProfile {
+  id: string;
+  intraId: number | null;
+  intraLogin: string;
+  displayName: string | null;
+  avatarUrl: string | null;
+  campus: string | null;
+}
+
 interface User {
   id: string;
   username: string;
   email: string;
-  role?: 'user' | 'admin' | 'moderator';
-  profile?: {
-    level: number;
-    total_xp: number;
-    intra_login?: string;
-    intra_image_url?: string;
-    avatar_url?: string;
-    display_name?: string;
-  };
+  profile?: UserProfile | null;
 }
 
 interface AuthContextType {
@@ -46,7 +47,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (response.ok) {
         const data = await response.json();
-        setUser(data.user);
+        // Map the API response to our User shape
+        if (data.user) {
+          setUser({
+            id: data.user.id,
+            username: data.user.username,
+            email: data.user.email,
+            profile: data.user.user || null, // user.user is the Prisma User record
+          });
+        } else {
+          setUser(null);
+        }
       } else {
         setUser(null);
         if (typeof window !== "undefined") {
@@ -62,15 +73,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    // Check for token in localStorage (from callback)
-    const token = localStorage.getItem("auth_token");
-    if (token) {
-      // Token exists, verify it
-      refreshUser();
-    } else {
-      // No token, check session
-      refreshUser();
-    }
+    refreshUser();
   }, []);
 
   const login = () => {
