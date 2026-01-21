@@ -11,7 +11,8 @@ import { useTheme } from "@/contexts/ThemeContext";
 
 /**
  * 42 Projects listing page.
- * Fetches projects from 42 API and displays with search, filter, and view toggle.
+ * Shows all 42 curriculum projects for browsing and discovery.
+ * User-specific projects are shown in the Profile page.
  */
 export default function FortyTwoProjectsPage() {
   const { theme } = useTheme();
@@ -102,8 +103,7 @@ export default function FortyTwoProjectsPage() {
             isCyberpunk ? "text-gray-400" : "text-muted-foreground"
           }`}
         >
-          Browse the 42 curriculum projects. Share your experiences, tips, and
-          README files.
+          Browse the 42 curriculum. Share tips, READMEs, and help other students.
         </p>
       </div>
 

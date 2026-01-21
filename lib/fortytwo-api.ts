@@ -309,3 +309,112 @@ export async function searchProjects(
     )}&page[size]=50`
   );
 }
+
+// ============= USER DATA =============
+
+export interface FortyTwoUserFull {
+  id: number;
+  login: string;
+  email?: string;
+  first_name: string;
+  last_name: string;
+  usual_full_name?: string;
+  displayname: string;
+  kind: string;
+  image?: {
+    link: string;
+    versions: {
+      large: string;
+      medium: string;
+      small: string;
+      micro: string;
+    };
+  };
+  location?: string | null;
+  correction_point?: number;
+  pool_month?: string;
+  pool_year?: string;
+  wallet?: number;
+  created_at: string;
+  updated_at: string;
+  cursus_users: {
+    id: number;
+    begin_at: string;
+    end_at: string | null;
+    grade: string | null;
+    level: number;
+    skills: { id: number; name: string; level: number }[];
+    cursus_id: number;
+    blackholed_at: string | null;
+    cursus: {
+      id: number;
+      name: string;
+      slug: string;
+      kind: string;
+    };
+  }[];
+  projects_users: {
+    id: number;
+    occurrence: number;
+    final_mark: number | null;
+    status: string;
+    "validated?": boolean | null;
+    current_team_id: number | null;
+    project: {
+      id: number;
+      name: string;
+      slug: string;
+      parent_id: number | null;
+    };
+    cursus_ids: number[];
+    marked_at: string | null;
+    marked: boolean;
+    retriable_at: string | null;
+    created_at: string;
+    updated_at: string;
+  }[];
+  achievements: {
+    id: number;
+    name: string;
+    description: string;
+    tier: string;
+    kind: string;
+    visible: boolean;
+    image: string;
+  }[];
+  campus: {
+    id: number;
+    name: string;
+    country: string;
+    city: string;
+  }[];
+}
+
+/**
+ * Fetches full user data including projects_users, cursus_users, achievements, etc.
+ * First finds user by login, then fetches full data by ID (filter endpoint lacks nested data).
+ */
+export async function getFullUserByLogin(login: string): Promise<FortyTwoUserFull | null> {
+  try {
+    // First get basic user info to get their ID
+    const users = await apiRequest<{ id: number; login: string }[]>(
+      `/v2/users?filter[login]=${encodeURIComponent(login)}`
+    );
+    
+    if (!users[0]) {
+      return null;
+    }
+    
+    // Fetch full user data by ID (this includes nested cursus_users, projects_users, etc.)
+    return await getFullUserById(users[0].id);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Fetches full user data by ID.
+ */
+export async function getFullUserById(userId: number): Promise<FortyTwoUserFull> {
+  return apiRequest<FortyTwoUserFull>(`/v2/users/${userId}`);
+}

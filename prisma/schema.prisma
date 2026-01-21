@@ -28,17 +28,28 @@ model User {
 
 /// 42 project tracked by the app (one row per 42 project).
 model Project {
-  id                String   @id @default(cuid())
-  slug              String   @unique
+  id                String          @id @default(cuid())
+  slug              String          @unique
   title             String
   description       String?
-  fortyTwoProjectId Int?     // ID from the 42 API, if available
+  fortyTwoProjectId Int?            @unique // ID from the 42 API
+  category          ProjectCategory @default(OTHER)
 
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
   posts             Post[]
   comments          Comment[]
+
+  @@index([category])
+  @@schema("public")
+}
+
+/// Category of a 42 project (curriculum track).
+enum ProjectCategory {
+  NEW_CORE  // New common core (42cursus)
+  OLD_CORE  // Old common core (legacy)
+  OTHER     // Piscine, outer circle, specializations, etc.
 
   @@schema("public")
 }

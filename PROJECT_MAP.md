@@ -22,8 +22,11 @@ components/theme-toggle.tsx: Theme toggle button for switching between Cyberpunk
 
 ## Pages
 
-app/page.tsx: Landing page (will be adapted to list 42 Reddit projects)
+app/page.tsx: Landing page with hero section
 app/auth/callback/page.tsx: OAuth callback handler page
+app/profile/page.tsx: Current user's profile showing their 42 projects and stats
+app/profile/[login]/page.tsx: Public profile page to view any user's 42 data by login
+app/42-projects/page.tsx: Browse all 42 curriculum projects
 
 ## Backend API (Next.js Route Handlers)
 
@@ -32,12 +35,15 @@ app/api/auth/callback/route.ts: OAuth callback handler, token exchange, user cre
 app/api/auth/me/route.ts: Current authenticated user endpoint
 app/api/auth/logout/route.ts: Logout endpoint
 app/api/auth/session/route.ts: Session information endpoint
+app/api/42/me/route.ts: Current user's full 42 profile from 42 API
+app/api/42/users/[login]/route.ts: Fetch any user's 42 profile by login
+app/api/42/projects/route.ts: List 42 curriculum projects
+app/api/42/projects/[slug]/route.ts: Single project details
 
 ## Core Libraries
 
 lib/auth.ts: Authentication helper functions for server-side auth with role support
-lib/permissions.ts: Server-side permission checking utilities for RBAC
-lib/permissions-client.ts: Client-side React hooks for permission checks
+lib/fortytwo-api.ts: 42 API client with OAuth client credentials flow
 lib/jwt.ts: JWT token generation and verification utilities
 lib/utils.ts: Shared utility functions
 lib/supabase/server.ts: Supabase server client for database access
