@@ -3,6 +3,7 @@ import {
   getProjectBySlug,
   getProject,
   getProjectSessions,
+  FortyTwoProjectSession,
 } from "@/lib/fortytwo-api";
 
 /**
@@ -34,7 +35,7 @@ export async function GET(
     }
 
     // Optionally fetch project sessions for additional details
-    let sessions = [];
+    let sessions: FortyTwoProjectSession[] = [];
     try {
       sessions = await getProjectSessions(project.id);
     } catch {

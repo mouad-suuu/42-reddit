@@ -11,7 +11,7 @@ import { ThemeToggle } from "./theme-toggle";
 export async function NavHeader() {
   const authUser = await getAuthUser();
   const user = authUser ? { id: authUser.id } : null;
-  const profile = authUser?.profile;
+  const profile = authUser?.user;
 
   return (
     <header className="sticky top-0 z-50 border-b-3 border-border bg-card">
@@ -32,7 +32,7 @@ export async function NavHeader() {
             HOME
           </Link>
           <Link
-            href="/42-projects"
+            href="/projects"
             className="text-sm font-bold transition-colors uppercase tracking-widest text-muted-foreground hover:text-foreground"
           >
             PROJECTS

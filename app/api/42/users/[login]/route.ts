@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getFullUserByLogin, getFullUserById } from "@/lib/fortytwo-api";
+import { syncDiscoveredProjects, extractProjectsFromUserData } from "@/lib/project-sync";
 
 /**
  * GET /api/42/users/[login]
@@ -54,6 +55,11 @@ export async function GET(
     const finishedProjects = projectsUsers
       .filter((pu) => pu.status === "finished" && pu.cursus_ids.includes(21))
       .sort((a, b) => new Date(b.marked_at || b.updated_at).getTime() - new Date(a.marked_at || a.updated_at).getTime());
+
+    // Sync discovered projects to database (async, non-blocking)
+    syncDiscoveredProjects(extractProjectsFromUserData(projectsUsers)).catch((err) => {
+      console.error("Failed to sync projects:", err);
+    });
 
     return NextResponse.json({
       user: {
