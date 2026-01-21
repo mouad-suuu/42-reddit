@@ -20,10 +20,10 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Praxis - Student Incubator Hub",
+  title: "42 Reddit- custom reddit for 42 students",
   description:
-    "The incubator hub for student developers. Join teams, earn XP, and ship real software products in a gamified ecosystem.",
-  generator: "Praxis",
+    "The custom reddit for 42 students. Share your 42 journey, find projects, and get help from peers.",
+  generator: "42 Reddit",
   icons: {
     icon: [
       { url: "/Praxis_new1.png", type: "image/png", sizes: "any" },

@@ -433,7 +433,7 @@ export default function ProfilePage() {
             {inProgressProjects.map((project) => {
               const config = statusConfig[project.status] || statusConfig.in_progress;
               return (
-                <Link href={`/42-projects/${project.slug}`} key={project.id}>
+                <Link href={`/projects/${project.slug}`} key={project.id}>
                   <Card
                     className={`p-5 h-full transition-all cursor-pointer ${
                       isCyberpunk
@@ -503,7 +503,7 @@ export default function ProfilePage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
             {finishedProjects.map((project) => (
-              <Link href={`/42-projects/${project.slug}`} key={project.id}>
+              <Link href={`/projects/${project.slug}`} key={project.id}>
                 <Card
                   className={`p-4 h-full transition-all cursor-pointer ${
                     isCyberpunk

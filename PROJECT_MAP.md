@@ -41,6 +41,7 @@ app/api/42/users/[login]/route.ts: Fetch any user's 42 profile by login (also sy
 app/api/42/projects/route.ts: List 42 curriculum projects from 42 API
 app/api/42/projects/[slug]/route.ts: Single project details from 42 API
 app/api/projects/route.ts: List projects from database with category filter
+app/api/projects/[slug]/route.ts: Get project details, lazy-loads description from 42 API
 
 ## Core Libraries
 

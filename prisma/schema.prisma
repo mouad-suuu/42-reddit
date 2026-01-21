@@ -7,6 +7,14 @@ datasource db {
   schemas  = ["public"]
 }
 
+/// User role for access control.
+enum UserRole {
+  USER
+  ADMIN
+
+  @@schema("public")
+}
+
 /// 42 Reddit application user, linked conceptually to 42 accounts.
 model User {
   id          String   @id @default(cuid())
@@ -15,6 +23,7 @@ model User {
   displayName String?
   avatarUrl   String?
   campus      String?  // 42 campus identifier (slug/name)
+  role        UserRole @default(USER)
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -31,9 +40,9 @@ model Project {
   id                String          @id @default(cuid())
   slug              String          @unique
   title             String
-  description       String?
   fortyTwoProjectId Int?            @unique // ID from the 42 API
   category          ProjectCategory @default(OTHER)
+  circle            Int             @default(-1) // -1 = unassigned, 0-6 = common core circles, 13 = no circle
 
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
@@ -42,6 +51,7 @@ model Project {
   comments          Comment[]
 
   @@index([category])
+  @@index([circle])
   @@schema("public")
 }
 
@@ -49,7 +59,8 @@ model Project {
 enum ProjectCategory {
   NEW_CORE  // New common core (42cursus)
   OLD_CORE  // Old common core (legacy)
-  OTHER     // Piscine, outer circle, specializations, etc.
+  PISCINE   // C Piscine projects
+  OTHER     // Outer circle, specializations, etc.
 
   @@schema("public")
 }

@@ -13,6 +13,7 @@ export interface AuthUser {
     displayName: string | null;
     avatarUrl: string | null;
     campus: string | null;
+    role: "USER" | "ADMIN";
   } | null;
 }
 

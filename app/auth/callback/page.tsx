@@ -32,8 +32,8 @@ function AuthCallbackContent() {
 
       // Refresh user data
       refreshUser().then(() => {
-        // Redirect to home page
-        router.push("/");
+        // Redirect to profile page after login
+        router.push("/profile");
       });
     } else {
       // No token, redirect to home

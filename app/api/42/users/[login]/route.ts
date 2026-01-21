@@ -56,10 +56,13 @@ export async function GET(
       .filter((pu) => pu.status === "finished" && pu.cursus_ids.includes(21))
       .sort((a, b) => new Date(b.marked_at || b.updated_at).getTime() - new Date(a.marked_at || a.updated_at).getTime());
 
-    // Sync discovered projects to database (async, non-blocking)
-    syncDiscoveredProjects(extractProjectsFromUserData(projectsUsers)).catch((err) => {
-      console.error("Failed to sync projects:", err);
-    });
+    // Sync discovered projects to database
+    try {
+      const syncResult = await syncDiscoveredProjects(extractProjectsFromUserData(projectsUsers));
+      console.log(`[/api/42/users/${login}] Project sync: ${syncResult.added} added, ${syncResult.existing} existing`);
+    } catch (err) {
+      console.error(`[/api/42/users/${login}] Failed to sync projects:`, err);
+    }
 
     return NextResponse.json({
       user: {

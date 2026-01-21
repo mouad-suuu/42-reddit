@@ -5,24 +5,38 @@ import { ProjectCategory } from "@prisma/client";
 /**
  * GET /api/projects
  * Lists projects from the database with optional filtering.
- * Query params: category (NEW_CORE|OLD_CORE|OTHER), search, page, per_page
+ * Query params: category, circle, search, page, per_page
+ * - circle: filter by circle number (0-6, 13 for no-circle). Only shows circle >= 0 by default.
  */
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const category = searchParams.get("category") as ProjectCategory | null;
+    const circleParam = searchParams.get("circle");
     const search = searchParams.get("search");
     const page = parseInt(searchParams.get("page") || "1", 10);
-    const perPage = Math.min(parseInt(searchParams.get("per_page") || "50", 10), 100);
+    const perPage = Math.min(parseInt(searchParams.get("per_page") || "50", 10), 500);
 
     // Build where clause
     const where: {
       category?: ProjectCategory;
+      circle?: number | { gte: number };
       OR?: { title: { contains: string; mode: "insensitive" } }[];
     } = {};
 
     if (category && Object.values(ProjectCategory).includes(category)) {
       where.category = category;
+    }
+
+    // Filter by circle - if specific circle requested, use it; otherwise show all >= 0
+    if (circleParam !== null) {
+      const circle = parseInt(circleParam, 10);
+      if (!isNaN(circle)) {
+        where.circle = circle;
+      }
+    } else {
+      // Default: only show projects with assigned circles (>= 0)
+      where.circle = { gte: 0 };
     }
 
     if (search) {
@@ -37,16 +51,16 @@ export async function GET(request: NextRequest) {
     // Get projects
     const projects = await prisma.project.findMany({
       where,
-      orderBy: { title: "asc" },
+      orderBy: [{ circle: "asc" }, { title: "asc" }],
       skip: (page - 1) * perPage,
       take: perPage,
       select: {
         id: true,
         slug: true,
         title: true,
-        description: true,
         fortyTwoProjectId: true,
         category: true,
+        circle: true,
         createdAt: true,
         _count: {
           select: {

@@ -8,15 +8,15 @@ import { Badge } from "@/components/ui/badge";
 import { useTheme } from "@/contexts/ThemeContext";
 import Link from "next/link";
 
-type ProjectCategory = "NEW_CORE" | "OLD_CORE" | "OTHER";
+type ProjectCategory = "NEW_CORE" | "OLD_CORE" | "PISCINE" | "OTHER";
 
 interface Project {
   id: string;
   slug: string;
   title: string;
-  description: string | null;
   fortyTwoProjectId: number | null;
   category: ProjectCategory;
+  circle: number;
   createdAt: string;
   _count: {
     posts: number;
@@ -24,9 +24,21 @@ interface Project {
   };
 }
 
+// Circle labels for display
+const circleLabels: Record<number, string> = {
+  0: "Circle 0",
+  1: "Circle 1",
+  2: "Circle 2",
+  3: "Circle 3",
+  4: "Circle 4",
+  5: "Circle 5",
+  6: "Circle 6",
+  13: "No Circle",
+};
+
 /**
  * Projects listing page.
- * Shows projects stored in the database (discovered from user profiles).
+ * Shows projects grouped by circle in horizontal rows.
  */
 export default function ProjectsPage() {
   const { theme } = useTheme();
@@ -37,7 +49,6 @@ export default function ProjectsPage() {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<ProjectCategory | null>(null);
-  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
 
   // Fetch projects from database
   useEffect(() => {
@@ -46,12 +57,9 @@ export default function ProjectsPage() {
         setLoading(true);
         setError(null);
 
-        const params = new URLSearchParams({ per_page: "100" });
+        const params = new URLSearchParams({ per_page: "200" });
         if (selectedCategory) {
           params.set("category", selectedCategory);
-        }
-        if (searchQuery) {
-          params.set("search", searchQuery);
         }
 
         const response = await fetch(`/api/projects?${params}`);
@@ -71,28 +79,60 @@ export default function ProjectsPage() {
     }
 
     fetchProjects();
-  }, [selectedCategory, searchQuery]);
+  }, [selectedCategory]);
 
-  // Filter projects locally for instant feedback
-  const filteredProjects = useMemo(() => {
-    return projects.filter((project) => {
-      const matchesSearch =
+  // Filter and group projects by circle
+  const projectsByCircle = useMemo(() => {
+    // Filter by search
+    const filtered = projects.filter((project) => {
+      if (!searchQuery) return true;
+      return (
         project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        project.description?.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesSearch;
+        project.slug.toLowerCase().includes(searchQuery.toLowerCase())
+      );
     });
+
+    // Group by circle
+    const grouped = new Map<number, Project[]>();
+    filtered.forEach((project) => {
+      const circle = project.circle;
+      if (!grouped.has(circle)) {
+        grouped.set(circle, []);
+      }
+      grouped.get(circle)!.push(project);
+    });
+
+    // Sort circles (0, 1, 2, ... 6, then 13)
+    const sortedCircles = Array.from(grouped.keys()).sort((a, b) => {
+      if (a === 13) return 1;
+      if (b === 13) return -1;
+      return a - b;
+    });
+
+    return sortedCircles.map((circle) => ({
+      circle,
+      label: circleLabels[circle] || `Circle ${circle}`,
+      projects: grouped.get(circle)!.sort((a, b) => a.title.localeCompare(b.title)),
+    }));
   }, [projects, searchQuery]);
+
+  const totalProjects = projectsByCircle.reduce((sum, g) => sum + g.projects.length, 0);
 
   const categoryConfig: Record<ProjectCategory, { label: string; color: string; bgColor: string }> = {
     NEW_CORE: {
-      label: "New Core",
+      label: "Core",
       color: isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-blue-700",
       bgColor: isCyberpunk ? "bg-[var(--cyber-cyan)]/10 border-[var(--cyber-cyan)]/30" : "bg-blue-50 border-blue-200",
     },
     OLD_CORE: {
-      label: "Old Core",
+      label: "Old",
       color: isCyberpunk ? "text-[var(--cyber-purple)]" : "text-purple-700",
       bgColor: isCyberpunk ? "bg-[var(--cyber-purple)]/10 border-[var(--cyber-purple)]/30" : "bg-purple-50 border-purple-200",
+    },
+    PISCINE: {
+      label: "Piscine",
+      color: isCyberpunk ? "text-orange-400" : "text-orange-600",
+      bgColor: isCyberpunk ? "bg-orange-500/10 border-orange-500/30" : "bg-orange-50 border-orange-200",
     },
     OTHER: {
       label: "Other",
@@ -105,13 +145,26 @@ export default function ProjectsPage() {
     { value: null, label: "All" },
     { value: "NEW_CORE", label: "New Core" },
     { value: "OLD_CORE", label: "Old Core" },
+    { value: "PISCINE", label: "Piscine" },
     { value: "OTHER", label: "Other" },
   ];
+
+  // Circle colors for visual distinction
+  const circleColors: Record<number, string> = {
+    0: isCyberpunk ? "border-l-green-500" : "border-l-green-500",
+    1: isCyberpunk ? "border-l-blue-500" : "border-l-blue-500",
+    2: isCyberpunk ? "border-l-cyan-500" : "border-l-cyan-500",
+    3: isCyberpunk ? "border-l-purple-500" : "border-l-purple-500",
+    4: isCyberpunk ? "border-l-pink-500" : "border-l-pink-500",
+    5: isCyberpunk ? "border-l-orange-500" : "border-l-orange-500",
+    6: isCyberpunk ? "border-l-red-500" : "border-l-red-500",
+    13: isCyberpunk ? "border-l-gray-500" : "border-l-gray-500",
+  };
 
   return (
     <div className="container mx-auto px-6 py-10">
       {/* Header */}
-      <div className="mb-10">
+      <div className="mb-8">
         <h1
           className={`text-4xl font-display font-black uppercase mb-2 ${
             isCyberpunk ? "cyber-gradient-text" : "text-foreground"
@@ -119,23 +172,8 @@ export default function ProjectsPage() {
         >
           42 Projects
         </h1>
-        <p
-          className={`text-lg ${
-            isCyberpunk ? "text-gray-400" : "text-muted-foreground"
-          }`}
-        >
-          Browse projects, share tips, READMEs, and help other students.
-        </p>
-        <p
-          className={`text-sm mt-2 ${
-            isCyberpunk ? "text-gray-500" : "text-muted-foreground"
-          }`}
-        >
-          💡 Projects are discovered when users view their profiles. Visit your{" "}
-          <Link href="/profile" className={`underline ${isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-primary"}`}>
-            profile
-          </Link>{" "}
-          to add your projects!
+        <p className={`text-lg ${isCyberpunk ? "text-gray-400" : "text-muted-foreground"}`}>
+          Browse projects organized by circle. Click any project to see tips, READMEs, and discussions.
         </p>
       </div>
 
@@ -197,51 +235,6 @@ export default function ProjectsPage() {
             </Button>
           ))}
         </div>
-
-        {/* View toggle */}
-        <div
-          className={`flex border-2 ${
-            isCyberpunk ? "border-[var(--cyber-border)]" : "border-border"
-          }`}
-        >
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setViewMode("list")}
-            className={`rounded-none ${
-              viewMode === "list"
-                ? isCyberpunk
-                  ? "bg-[var(--cyber-cyan)]/20 text-[var(--cyber-cyan)]"
-                  : "bg-primary text-primary-foreground"
-                : ""
-            }`}
-          >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setViewMode("grid")}
-            className={`rounded-none ${
-              viewMode === "grid"
-                ? isCyberpunk
-                  ? "bg-[var(--cyber-cyan)]/20 text-[var(--cyber-cyan)]"
-                  : "bg-primary text-primary-foreground"
-                : ""
-            }`}
-          >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-              />
-            </svg>
-          </Button>
-        </div>
       </div>
 
       {/* Loading state */}
@@ -289,95 +282,88 @@ export default function ProjectsPage() {
         </div>
       )}
 
-      {/* Results */}
+      {/* Projects by Circle */}
       {!loading && !error && (
         <>
           {/* Results count */}
-          <div className={`mb-4 text-sm font-mono ${isCyberpunk ? "text-gray-500" : "text-muted-foreground"}`}>
-            {filteredProjects.length} project{filteredProjects.length !== 1 ? "s" : ""} found
+          <div className={`mb-6 text-sm font-mono ${isCyberpunk ? "text-gray-500" : "text-muted-foreground"}`}>
+            {totalProjects} project{totalProjects !== 1 ? "s" : ""} in {projectsByCircle.length} circle
+            {projectsByCircle.length !== 1 ? "s" : ""}
           </div>
 
-          {/* Projects list/grid */}
-          {viewMode === "list" ? (
-            <div className="space-y-4">
-              {filteredProjects.map((project, index) => (
-                <Link href={`/projects/${project.slug}`} key={project.id}>
-                  <Card
-                    className={`p-5 transition-all cursor-pointer animate-fade-in ${
-                      isCyberpunk
-                        ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)] hover:border-[var(--cyber-cyan)]"
-                        : "border-2 border-border hover:manga-shadow-lg"
+          {/* Circle rows */}
+          <div className="space-y-8">
+            {projectsByCircle.map(({ circle, label, projects: circleProjects }) => (
+              <div
+                key={circle}
+                className={`border-l-4 ${circleColors[circle] || "border-l-gray-500"} ${
+                  isCyberpunk ? "bg-[var(--cyber-panel)]/50" : "bg-card/50"
+                }`}
+              >
+                {/* Circle header */}
+                <div
+                  className={`px-4 py-3 border-b ${
+                    isCyberpunk ? "border-[var(--cyber-border)]" : "border-border"
+                  }`}
+                >
+                  <h2
+                    className={`text-xl font-display font-bold uppercase ${
+                      isCyberpunk ? "text-white" : "text-foreground"
                     }`}
-                    style={{ animationDelay: `${Math.min(index * 30, 500)}ms` }}
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className={`font-display font-bold text-lg uppercase ${isCyberpunk ? "text-white" : "text-foreground"}`}>
-                            {project.title}
-                          </h3>
-                          <Badge
-                            variant="outline"
-                            className={`${categoryConfig[project.category].color} ${categoryConfig[project.category].bgColor}`}
+                    {label}
+                    <span className={`ml-2 text-sm font-normal ${isCyberpunk ? "text-gray-500" : "text-muted-foreground"}`}>
+                      ({circleProjects.length} project{circleProjects.length !== 1 ? "s" : ""})
+                    </span>
+                  </h2>
+                </div>
+
+                {/* Projects in this circle - horizontal scroll */}
+                <div className="p-4 overflow-x-auto">
+                  <div className="flex gap-4" style={{ minWidth: "min-content" }}>
+                    {circleProjects.map((project) => (
+                      <Link href={`/projects/${project.slug}`} key={project.id}>
+                        <Card
+                          className={`p-4 w-64 shrink-0 transition-all cursor-pointer hover:scale-105 ${
+                            isCyberpunk
+                              ? "bg-[var(--cyber-dark)] border border-[var(--cyber-border)] hover:border-[var(--cyber-cyan)] hover:shadow-[0_0_20px_rgba(0,255,255,0.2)]"
+                              : "border-2 border-border hover:manga-shadow"
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-2 mb-2">
+                            <h3
+                              className={`font-display font-bold text-sm uppercase leading-tight ${
+                                isCyberpunk ? "text-white" : "text-foreground"
+                              }`}
+                            >
+                              {project.title}
+                            </h3>
+                            <Badge
+                              variant="outline"
+                              className={`text-xs shrink-0 ${categoryConfig[project.category].color} ${categoryConfig[project.category].bgColor}`}
+                            >
+                              {categoryConfig[project.category].label}
+                            </Badge>
+                          </div>
+                          <div
+                            className={`flex gap-3 text-xs ${
+                              isCyberpunk ? "text-gray-500" : "text-muted-foreground"
+                            }`}
                           >
-                            {categoryConfig[project.category].label}
-                          </Badge>
-                        </div>
-                        {project.description && (
-                          <p className={`text-sm line-clamp-1 ${isCyberpunk ? "text-gray-400" : "text-muted-foreground"}`}>
-                            {project.description}
-                          </p>
-                        )}
-                      </div>
-                      <div className={`flex gap-4 text-sm ${isCyberpunk ? "text-gray-500" : "text-muted-foreground"}`}>
-                        <span title="Posts">📝 {project._count.posts}</span>
-                        <span title="Comments">💬 {project._count.comments}</span>
-                      </div>
-                    </div>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProjects.map((project, index) => (
-                <Link href={`/projects/${project.slug}`} key={project.id}>
-                  <Card
-                    className={`p-5 h-full transition-all cursor-pointer animate-fade-in ${
-                      isCyberpunk
-                        ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)] hover:border-[var(--cyber-cyan)]"
-                        : "border-2 border-border hover:manga-shadow"
-                    }`}
-                    style={{ animationDelay: `${Math.min(index * 30, 500)}ms` }}
-                  >
-                    <div className="flex items-start justify-between mb-3">
-                      <h3 className={`font-display font-bold uppercase ${isCyberpunk ? "text-white" : "text-foreground"}`}>
-                        {project.title}
-                      </h3>
-                      <Badge
-                        variant="outline"
-                        className={`${categoryConfig[project.category].color} ${categoryConfig[project.category].bgColor} shrink-0`}
-                      >
-                        {categoryConfig[project.category].label}
-                      </Badge>
-                    </div>
-                    {project.description && (
-                      <p className={`text-sm line-clamp-2 mb-4 ${isCyberpunk ? "text-gray-400" : "text-muted-foreground"}`}>
-                        {project.description}
-                      </p>
-                    )}
-                    <div className={`flex gap-4 text-sm ${isCyberpunk ? "text-gray-500" : "text-muted-foreground"}`}>
-                      <span>📝 {project._count.posts}</span>
-                      <span>💬 {project._count.comments}</span>
-                    </div>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-          )}
+                            <span>📝 {project._count.posts}</span>
+                            <span>💬 {project._count.comments}</span>
+                          </div>
+                        </Card>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
 
           {/* Empty state */}
-          {filteredProjects.length === 0 && (
+          {projectsByCircle.length === 0 && (
             <div
               className={`text-center py-20 ${
                 isCyberpunk
@@ -392,10 +378,12 @@ export default function ProjectsPage() {
                 No projects found
               </h3>
               <p className={`mb-4 ${isCyberpunk ? "text-gray-400" : "text-muted-foreground"}`}>
-                Projects are discovered when users view their profiles.
+                {searchQuery
+                  ? "Try a different search term."
+                  : "Projects with assigned circles will appear here."}
               </p>
               <Button asChild className={isCyberpunk ? "bg-[var(--cyber-cyan)] text-black hover:bg-[var(--cyber-cyan)]/80" : ""}>
-                <Link href="/profile">View your profile to add projects</Link>
+                <Link href="/profile">View your profile to discover projects</Link>
               </Button>
             </div>
           )}

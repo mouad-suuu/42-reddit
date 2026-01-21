@@ -54,7 +54,7 @@ export function FortyTwoProjectCard({
 
   if (viewMode === "list") {
     return (
-      <Link href={`/42-projects/${project.slug}`}>
+      <Link href={`/projects/${project.slug}`}>
         <Card
           className={`group flex items-center gap-6 p-5 transition-all cursor-pointer ${
             isCyberpunk
@@ -157,7 +157,7 @@ export function FortyTwoProjectCard({
 
   // Grid view
   return (
-    <Link href={`/42-projects/${project.slug}`}>
+    <Link href={`/projects/${project.slug}`}>
       <Card
         className={`group transition-all duration-300 cursor-pointer relative overflow-hidden h-full ${
           isCyberpunk
