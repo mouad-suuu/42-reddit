@@ -93,7 +93,7 @@ export async function GET(
     );
 
     // Sort by score (highest first)
-    postsWithScores.sort((a, b) => b.score - a.score);
+    postsWithScores.sort((a: { score: number }, b: { score: number }) => b.score - a.score);
 
     return NextResponse.json({ posts: postsWithScores });
   } catch (error) {
