@@ -385,11 +385,11 @@ export default function ProfilePage() {
             }`}
           >
             <p className={`font-mono text-sm ${isCyberpunk ? "text-red-400" : "text-red-700"}`}>
-              ⚠️ Blackhole:{" "}
+               Black Hole:{" "}
               <span className="font-bold">
-                {new Date(cursus.blackholedAt).toLocaleDateString("en-US", {
+                {new Date(cursus.blackholedAt).toLocaleDateString("en-FR", {
                   year: "numeric",
-                  month: "long",
+                  month: "short",
                   day: "numeric",
                 })}
               </span>
@@ -405,7 +405,7 @@ export default function ProfilePage() {
             isCyberpunk ? "text-white" : "text-foreground"
           }`}
         >
-          🚀 Current Projects ({inProgressProjects.length})
+          Current Projects ({inProgressProjects.length})
         </h2>
 
         {inProgressProjects.length === 0 ? (
@@ -478,7 +478,7 @@ export default function ProfilePage() {
             isCyberpunk ? "text-white" : "text-foreground"
           }`}
         >
-          ✅ Recently Completed ({stats.finishedProjects})
+          Recently Completed ({stats.finishedProjects})
         </h2>
 
         {finishedProjects.length === 0 ? (
@@ -555,7 +555,7 @@ export default function ProfilePage() {
               isCyberpunk ? "text-white" : "text-foreground"
             }`}
           >
-            📊 Skills
+           Skills
           </h2>
           <Card
             className={`p-6 ${
