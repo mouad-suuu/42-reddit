@@ -5,3 +5,6 @@ npm-debug.log
 README.md
 .next
 .git
+.env
+.DS_Store
+*.md
