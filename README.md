@@ -1,37 +1,133 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 42 Reddit
 
-## Getting Started
+## Description
+42 Reddit is a community platform designed specifically for students of the 42 Network. It allows users to discuss projects, share resources, and interact with peers in a reddit-style format.
 
-First, run the development server:
+#### born to solve:
+- Not clear projects Subjects
+- Not clear projects Objectives
+- Wasting time looking for the context
+- A commun place to share resources and documentations made by peers
+- A way to find peers that have finished the same projects you'are working on that are available in your campus
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Features
+- **42 Authentication**: Secure login using 42 Intra OAuth.
+- **Project Discussions**: Dedicated threads for every 42 project.
+- **Find peers**: Find peers that have finished the same projects you'are working on, can be filtered by campus and logged in.
+- **Vote System**: Upvote/downvote posts and comments to highlight quality content.
+- **Markdown Support**: Rich text formatting for READMEs and comments.
+- **User Profiles**: View 42 stats, campus info, and activity history.
+- **Real-time Caching**: Fast data retrieval using Redis for 42 API responses.
+- **Project Tracking**: Browse projects by cursus, circle, and completion status.
+- **Responsive Design**: Modern UI/UX optimized for all devices.
+
+## Tech Stack
+This project is built using modern web technologies:
+
+- **Framework**: [Next.js](https://nextjs.org/) (React)
+- **Language**: TypeScript
+- **Runtime**: [Bun](https://bun.sh/)
+- **Database**: PostgreSQL (hosted on [Supabase](https://supabase.com/))
+- **ORM**: [Prisma](https://www.prisma.io/)
+- **Caching**: Redis (hosted on [Railway](https://railway.app/) or local) using `ioredis`
+- **Styling**: Tailwind CSS, Radix UI
+- **Containerization**: Docker
+- **Deployment**: Railway
+
+## Environment Variables
+
+Create a `.env` file in the root directory with the following variables:
+
+```ini
+# 42 API Configuration (Get these from 42 API settings)
+FORTYTWO_CLIENT_ID="your_client_id"
+FORTYTWO_CLIENT_SECRET="your_client_secret"
+Redirect_URL="http://localhost:3000/api/auth/callback/" # Adjust for production
+
+# Database Configuration (Supabase)
+SUPABASE_URL="https://your-project.supabase.co"
+SUPABASE_ANON_KEY="your_anon_key"
+SUPABASE_SERVICE_ROLE_KEY="your_service_role_key"
+sUPABASE_PASSWORD="your_db_password"
+
+# Prisma Connection Strings
+# Transaction connection (pgbouncer)
+DATABASE_URL="postgresql://postgres.[ref]:[password]@[host]:6543/postgres?pgbouncer=true"
+# Session connection (direct)
+DIRECT_URL="postgresql://postgres.[ref]:[password]@[host]:5432/postgres"
+
+# App Secrets
+JWT_SECRET="your_jwt_secret"
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
+
+# Redis Configuration
+# For local dev using Railway Redis:
+REDIS_URL="redis://default:password@public-host:port"
+# For production/docker internal:
+# REDIS_URL="redis://redis:6379"
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## How to Run Locally
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Prerequisites
+- [Bun](https://bun.sh/) installed
+- Docker (optional, for local Redis)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Installation
+1.  Clone the repository:
+    ```bash
+    git clone <repository-url>
+    cd 42-reddit
+    ```
+2.  Install dependencies:
+    ```bash
+    bun install
+    ```
+3.  Generate Prisma client:
+    ```bash
+    bunx prisma generate
+    ```
 
+### Development Server
+Run the development server:
+```bash
+bun run dev
+```
+Open [http://localhost:3000](http://localhost:3000) with your browser.
 
-## Deploy on Vercel
+### Using Docker
+To run the entire stack (App + Redis) in Docker containers:
+```bash
+docker compose up --build
+```
+The app will be available at [http://localhost:3000](http://localhost:3000).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## How to Deploy
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Railway Deployment
+The project is optimized for deployment on [Railway](https://railway.app/).
 
-## Learn More
+1.  **Push to GitHub**: Ensure your code is in a GitHub repository.
+2.  **New Project on Railway**:
+    *   Select "Deploy from GitHub repo".
+    *   Choose your repository.
+3.  **Add Database (Redis)**:
+    *   Right-click on the canvas -> New -> Database -> Redis.
+4.  **Configure Environment Variables**:
+    *   Go to the app service settings -> Variables.
+    *   Add all variables from your `.env` file.
+    *   **Important**: Railway provides `REDIS_URL` automatically if you link the services, but ensure your app is configured to use it.
+    *   Ensure `NIXPACKS_PKGS` or `dockerfile` usage is correct. We use a custom `Dockerfile`.
+5.  **Build & Deploy**:
+    *   Railway should detect the `Dockerfile` and build automatically.
+    *   The `Dockerfile` handles `prisma generate` and the build process.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Docker Deployment
+You can build the image anywhere Docker is available:
+```bash
+docker build \
+  --build-arg DATABASE_URL="your_db_url" \
+  --build-arg DIRECT_URL="your_direct_url" \
+  ... (other args) ... \
+  -t 42-reddit .
+```
