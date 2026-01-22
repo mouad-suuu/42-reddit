@@ -6,6 +6,7 @@ import { NavHeaderClient } from "@/components/nav-header-client";
 import { AuthProvider } from "@/components/auth-provider";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import "./globals.css";
+import "github-markdown-css/github-markdown.css";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],

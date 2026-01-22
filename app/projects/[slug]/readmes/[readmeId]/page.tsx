@@ -307,11 +307,10 @@ export default function ReadmeDetailPage() {
             {/* Markdown content */}
             <div
               className={cn(
-                "prose prose-lg max-w-none",
-                isCyberpunk
-                  ? "prose-invert prose-headings:text-white prose-p:text-gray-300 prose-a:text-[var(--cyber-cyan)] prose-code:text-[var(--cyber-purple)] prose-code:bg-[var(--cyber-dark)] prose-pre:bg-[var(--cyber-dark)] prose-pre:border prose-pre:border-[var(--cyber-border)]"
-                  : "prose-headings:text-foreground prose-p:text-foreground"
+                "markdown-body",
+                isCyberpunk ? "markdown-cyberpunk" : ""
               )}
+              style={{ backgroundColor: 'transparent' }}
             >
               <ReactMarkdown remarkPlugins={[remarkGfm]}>
                 {readme.content}

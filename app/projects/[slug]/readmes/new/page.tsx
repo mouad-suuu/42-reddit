@@ -386,12 +386,12 @@ export default function NewReadmePage() {
 
           <div
             className={cn(
-              "prose prose-sm max-w-none overflow-auto",
+              "overflow-auto",
               "min-h-[500px] max-h-[600px]",
-              isCyberpunk
-                ? "prose-invert prose-headings:text-white prose-p:text-gray-300 prose-a:text-[var(--cyber-cyan)] prose-code:text-[var(--cyber-purple)] prose-code:bg-[var(--cyber-dark)] prose-pre:bg-[var(--cyber-dark)]"
-                : "prose-headings:text-foreground prose-p:text-foreground"
+              "markdown-body",
+              isCyberpunk ? "markdown-cyberpunk" : ""
             )}
+            style={{ backgroundColor: 'transparent' }}
           >
             {content.trim() ? (
               <ReactMarkdown remarkPlugins={[remarkGfm]}>

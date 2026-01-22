@@ -13,6 +13,7 @@ interface VoteButtonProps {
   initialUserVote?: number; // 1, -1, or undefined
   size?: "sm" | "md";
   onAuthRequired?: () => void;
+  readOnly?: boolean;
 }
 
 /**
@@ -26,6 +27,7 @@ export function VoteButton({
   initialUserVote,
   size = "md",
   onAuthRequired,
+  readOnly = false,
 }: VoteButtonProps) {
   const { authenticated } = useAuth();
   const { theme } = useTheme();
@@ -37,6 +39,8 @@ export function VoteButton({
 
   const handleVote = useCallback(
     async (value: 1 | -1) => {
+      if (readOnly) return;
+
       if (!authenticated) {
         onAuthRequired?.();
         return;
@@ -96,7 +100,7 @@ export function VoteButton({
         setIsLoading(false);
       }
     },
-    [authenticated, isLoading, score, userVote, targetType, targetId, onAuthRequired]
+    [authenticated, isLoading, score, userVote, targetType, targetId, onAuthRequired, readOnly]
   );
 
   const buttonSize = size === "sm" ? "h-5 w-5" : "h-6 w-6";
@@ -104,13 +108,14 @@ export function VoteButton({
   const fontSize = size === "sm" ? "text-xs" : "text-sm";
 
   return (
-    <div className="flex flex-col items-center gap-0.5">
+    <div className={cn("flex flex-col items-center gap-0.5", readOnly && "opacity-80")}>
       <button
         onClick={() => handleVote(1)}
-        disabled={isLoading}
+        disabled={isLoading || readOnly}
         className={cn(
           "p-0.5 rounded transition-colors",
           buttonSize,
+          readOnly ? "cursor-default" : "cursor-pointer",
           userVote === 1
             ? isCyberpunk
               ? "text-[var(--cyber-cyan)] bg-[var(--cyber-cyan)]/20"
@@ -118,7 +123,7 @@ export function VoteButton({
             : isCyberpunk
               ? "text-gray-500 hover:text-[var(--cyber-cyan)] hover:bg-[var(--cyber-cyan)]/10"
               : "text-muted-foreground hover:text-primary hover:bg-primary/10",
-          isLoading && "opacity-50 cursor-not-allowed"
+          (isLoading || readOnly) && "hover:bg-transparent hover:text-inherit"
         )}
         aria-label="Upvote"
       >
@@ -145,16 +150,17 @@ export function VoteButton({
 
       <button
         onClick={() => handleVote(-1)}
-        disabled={isLoading}
+        disabled={isLoading || readOnly}
         className={cn(
           "p-0.5 rounded transition-colors",
           buttonSize,
+          readOnly ? "cursor-default" : "cursor-pointer",
           userVote === -1
             ? "text-destructive bg-destructive/20"
             : isCyberpunk
               ? "text-gray-500 hover:text-destructive hover:bg-destructive/10"
               : "text-muted-foreground hover:text-destructive hover:bg-destructive/10",
-          isLoading && "opacity-50 cursor-not-allowed"
+          (isLoading || readOnly) && "hover:bg-transparent hover:text-inherit"
         )}
         aria-label="Downvote"
       >

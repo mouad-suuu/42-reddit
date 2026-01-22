@@ -12,7 +12,7 @@ import { Comment, CommentData } from "@/components/comment";
 import { ReadmePreviewCard, ReadmePreviewData } from "@/components/readme-preview-card";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { MessageSquare, FileText, Send, Loader2, Plus, Users, CheckCircle2 } from "lucide-react";
+import { MessageSquare, FileText, Send, Loader2, Plus, Users, CheckCircle2, Edit } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 type ProjectCategory = "NEW_CORE" | "OLD_CORE" | "PISCINE" | "OTHER";
@@ -157,13 +157,13 @@ export default function ProjectDetailPage() {
   // Fetch project users from user's campus
   const fetchProjectUsers = useCallback(async (page: number = 1, append: boolean = false) => {
     if (!project?.fortyTwoProjectId || !user?.profile?.campus) return;
-    
+
     if (append) {
       setLoadingMoreUsers(true);
     } else {
       setProjectUsersLoading(true);
     }
-    
+
     try {
       const response = await fetch(
         `/api/42/projects/${project.slug}/users?page=${page}&per_page=20&campus=${encodeURIComponent(user.profile.campus)}`
@@ -171,13 +171,13 @@ export default function ProjectDetailPage() {
       if (response.ok) {
         const data = await response.json();
         const newUsers = data.users || [];
-        
+
         if (append) {
           setProjectUsers((prev) => [...prev, ...newUsers]);
         } else {
           setProjectUsers(newUsers);
         }
-        
+
         // Check if rate limited
         if (data.rateLimited) {
           setRateLimited(true);
@@ -187,7 +187,7 @@ export default function ProjectDetailPage() {
           // Check if there are more users to load
           setHasMoreUsers(newUsers.length === 20); // If we got 20, there might be more
         }
-        
+
         setProjectUsersPage(page);
       } else {
         // On any error, return empty array gracefully
@@ -470,7 +470,74 @@ export default function ProjectDetailPage() {
                 <h2 className={cn("text-xl font-display font-bold uppercase", isCyberpunk ? "text-white" : "text-foreground")}>
                   💬 Discussion
                 </h2>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    if (!authenticated) {
+                      login();
+                      return;
+                    }
+                    setShowCommentForm(!showCommentForm);
+                  }}
+                  className={cn(
+                    isCyberpunk && "border-[var(--cyber-border)] hover:border-[var(--cyber-cyan)] text-[var(--cyber-cyan)]"
+                  )}
+                >
+                  <Plus className={cn("h-4 w-4 mr-2", showCommentForm && "rotate-45 transition-transform")} />
+                  {showCommentForm ? "Cancel" : "Add Comment"}
+                </Button>
               </div>
+
+              {/* Inline Comment Form */}
+              {showCommentForm && (
+                <div className="mb-6 flex gap-4 animate-in fade-in slide-in-from-top-2">
+                  <Avatar className="h-8 w-8 shrink-0">
+                    <AvatarImage
+                      src={user?.profile?.avatarUrl || undefined}
+                      alt={user?.profile?.intraLogin || "User"}
+                    />
+                    <AvatarFallback>
+                      {user?.profile?.intraLogin?.slice(0, 2).toUpperCase() || "?"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 space-y-3">
+                    <Textarea
+                      placeholder="Ask a question, share a tip..."
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                      className={cn(
+                        "min-h-[100px] text-sm",
+                        isCyberpunk && "bg-[var(--cyber-dark)] border-[var(--cyber-border)]"
+                      )}
+                      autoFocus
+                    />
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setShowCommentForm(false);
+                          setNewComment("");
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        onClick={handlePostComment}
+                        disabled={!newComment.trim() || isPostingComment}
+                        size="sm"
+                        className={cn(
+                          isCyberpunk && "bg-[var(--cyber-cyan)] text-black hover:bg-[var(--cyber-cyan)]/80"
+                        )}
+                      >
+                        <Send className="h-3 w-3 mr-2" />
+                        {isPostingComment ? "Posting..." : "Post Comment"}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {commentsLoading ? (
                 <div className="text-center py-12">
@@ -511,6 +578,27 @@ export default function ProjectDetailPage() {
                 <h2 className={cn("text-xl font-display font-bold uppercase", isCyberpunk ? "text-white" : "text-foreground")}>
                   📚 READMEs
                 </h2>
+                <Button
+                  asChild
+                  size="sm"
+                  className={cn(
+                    isCyberpunk && "bg-[var(--cyber-purple)] text-white hover:bg-[var(--cyber-purple)]/80"
+                  )}
+                >
+                  <Link href={`/projects/${slug}/readmes/new`}>
+                    {readmes.find(r => r.author.id === user?.profile?.id) ? (
+                      <>
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit Your README
+                      </>
+                    ) : (
+                      <>
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add README
+                      </>
+                    )}
+                  </Link>
+                </Button>
               </div>
 
               {readmesLoading ? (
@@ -522,15 +610,6 @@ export default function ProjectDetailPage() {
                   <div className="text-5xl mb-4">📚</div>
                   <p className="text-lg mb-2">No READMEs yet.</p>
                   <p className="text-sm mb-4">Be the first to share your project notes and guides!</p>
-                  <Button
-                    asChild
-                    className={cn(isCyberpunk && "bg-[var(--cyber-purple)] hover:bg-[var(--cyber-purple)]/80")}
-                  >
-                    <Link href={`/projects/${slug}/readmes/new`}>
-                      <Plus className="h-4 w-4 mr-2" />
-                      Share Your First README
-                    </Link>
-                  </Button>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -549,73 +628,7 @@ export default function ProjectDetailPage() {
 
         {/* Sidebar */}
         <div className="space-y-6">
-          {/* Add Comment (only show in comments view) */}
-          {activeView === "comments" && (
-            <Card
-              className={cn(
-                "p-4",
-                isCyberpunk
-                  ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)]"
-                  : "border-2 border-border manga-shadow"
-              )}
-            >
-              {!showCommentForm ? (
-                <Button
-                  className={cn(
-                    "w-full",
-                    isCyberpunk && "bg-[var(--cyber-cyan)] text-black hover:bg-[var(--cyber-cyan)]/80"
-                  )}
-                  onClick={() => {
-                    if (!authenticated) {
-                      login();
-                      return;
-                    }
-                    setShowCommentForm(true);
-                  }}
-                  size="sm"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Comment
-                </Button>
-              ) : (
-                <div className="space-y-3">
-                  <Textarea
-                    placeholder="Ask a question, share a tip..."
-                    value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
-                    className={cn(
-                      "min-h-[120px] text-sm",
-                      isCyberpunk && "bg-[var(--cyber-dark)] border-[var(--cyber-border)]"
-                    )}
-                  />
-                  <div className="flex gap-2">
-                    <Button
-                      onClick={handlePostComment}
-                      disabled={!newComment.trim() || isPostingComment}
-                      size="sm"
-                      className={cn(
-                        "flex-1",
-                        isCyberpunk && "bg-[var(--cyber-cyan)] text-black hover:bg-[var(--cyber-cyan)]/80"
-                      )}
-                    >
-                      <Send className="h-3 w-3 mr-1" />
-                      {isPostingComment ? "Posting..." : "Post"}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setShowCommentForm(false);
-                        setNewComment("");
-                      }}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </Card>
-          )}
+          {/* Completed Users from Campus */}
 
           {/* Completed Users from Campus */}
           {project.fortyTwoProjectId && (

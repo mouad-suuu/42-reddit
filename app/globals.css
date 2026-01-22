@@ -206,11 +206,12 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
     transition: background-color 0.3s ease, color 0.3s ease;
   }
-  
+
   /* Selection styling - theme aware */
   ::selection {
     background-color: var(--primary);
@@ -230,15 +231,18 @@
 :root:not([data-theme]) ::-webkit-scrollbar {
   width: 8px;
 }
+
 [data-theme="manga"] ::-webkit-scrollbar-track,
 :root:not([data-theme]) ::-webkit-scrollbar-track {
   background: var(--manga-paper-dark);
   border-left: 2px solid var(--manga-ink);
 }
+
 [data-theme="manga"] ::-webkit-scrollbar-thumb,
 :root:not([data-theme]) ::-webkit-scrollbar-thumb {
   background: var(--manga-ink);
 }
+
 [data-theme="manga"] ::-webkit-scrollbar-thumb:hover,
 :root:not([data-theme]) ::-webkit-scrollbar-thumb:hover {
   background: var(--manga-ink-light);
@@ -247,7 +251,7 @@
 /* ===== CYBERPUNK THEME BODY STYLES ===== */
 [data-theme="cyberpunk"] body {
   background-color: var(--cyber-black);
-  background-image: 
+  background-image:
     linear-gradient(rgba(18, 18, 26, 0.7) 1px, transparent 1px),
     linear-gradient(90deg, rgba(18, 18, 26, 0.7) 1px, transparent 1px);
   background-size: 40px 40px;
@@ -289,12 +293,15 @@
 [data-theme="cyberpunk"] ::-webkit-scrollbar {
   width: 6px;
 }
+
 [data-theme="cyberpunk"] ::-webkit-scrollbar-track {
   background: var(--cyber-dark);
 }
+
 [data-theme="cyberpunk"] ::-webkit-scrollbar-thumb {
   background: var(--cyber-border);
 }
+
 [data-theme="cyberpunk"] ::-webkit-scrollbar-thumb:hover {
   background: var(--cyber-cyan);
 }
@@ -363,7 +370,7 @@
 }
 
 .crosshatch {
-  background-image: 
+  background-image:
     url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10L10 0M0 0L10 10' stroke='%23000' stroke-width='0.5' fill='none'/%3E%3C/svg%3E");
   background-size: 10px 10px;
 }
@@ -424,7 +431,7 @@
   transform: skewY(2deg);
 }
 
-.parallelogram > * {
+.parallelogram>* {
   transform: skewY(-2deg);
 }
 
@@ -502,14 +509,12 @@
 
 .hand-drawn-progress-fill {
   height: 100%;
-  background-image: 
-    repeating-linear-gradient(
-      90deg,
+  background-image:
+    repeating-linear-gradient(90deg,
       var(--manga-ink) 0px,
       var(--manga-ink) 8px,
       transparent 8px,
-      transparent 10px
-    );
+      transparent 10px);
   background-color: var(--manga-ink);
   transition: width 0.5s ease;
 }
@@ -565,16 +570,14 @@
   background: var(--card);
   position: relative;
   padding: 1.5rem;
-  clip-path: polygon(
-    0% 3%,
-    2% 0%,
-    98% 0%,
-    100% 2%,
-    100% 97%,
-    97% 100%,
-    3% 100%,
-    0% 98%
-  );
+  clip-path: polygon(0% 3%,
+      2% 0%,
+      98% 0%,
+      100% 2%,
+      100% 97%,
+      97% 100%,
+      3% 100%,
+      0% 98%);
 }
 
 .manga-panel-deformed::before {
@@ -585,16 +588,14 @@
   right: 0;
   bottom: 0;
   background: var(--card);
-  clip-path: polygon(
-    0% 3%,
-    2% 0%,
-    98% 0%,
-    100% 2%,
-    100% 97%,
-    97% 100%,
-    3% 100%,
-    0% 98%
-  );
+  clip-path: polygon(0% 3%,
+      2% 0%,
+      98% 0%,
+      100% 2%,
+      100% 97%,
+      97% 100%,
+      3% 100%,
+      0% 98%);
   z-index: -2;
 }
 
@@ -606,16 +607,14 @@
   right: -3px;
   bottom: -3px;
   background: var(--manga-ink);
-  clip-path: polygon(
-    0% 3%,
-    2% 0%,
-    98% 0%,
-    100% 2%,
-    100% 97%,
-    97% 100%,
-    3% 100%,
-    0% 98%
-  );
+  clip-path: polygon(0% 3%,
+      2% 0%,
+      98% 0%,
+      100% 2%,
+      100% 97%,
+      97% 100%,
+      3% 100%,
+      0% 98%);
   z-index: -3;
 }
 
@@ -628,7 +627,7 @@
   box-shadow: 5px 6px 0px 0px var(--manga-ink);
 }
 
-.manga-panel-slant > * {
+.manga-panel-slant>* {
   transform: rotate(0.5deg);
 }
 
@@ -636,16 +635,14 @@
 .manga-panel-action {
   background: var(--card);
   position: relative;
-  clip-path: polygon(
-    0% 8px,
-    8px 0%,
-    calc(100% - 4px) 0%,
-    100% 4px,
-    100% calc(100% - 8px),
-    calc(100% - 8px) 100%,
-    4px 100%,
-    0% calc(100% - 4px)
-  );
+  clip-path: polygon(0% 8px,
+      8px 0%,
+      calc(100% - 4px) 0%,
+      100% 4px,
+      100% calc(100% - 8px),
+      calc(100% - 8px) 100%,
+      4px 100%,
+      0% calc(100% - 4px));
 }
 
 .manga-panel-action::before {
@@ -656,16 +653,14 @@
   right: -3px;
   bottom: -3px;
   background: var(--manga-ink);
-  clip-path: polygon(
-    0% 8px,
-    8px 0%,
-    calc(100% - 4px) 0%,
-    100% 4px,
-    100% calc(100% - 8px),
-    calc(100% - 8px) 100%,
-    4px 100%,
-    0% calc(100% - 4px)
-  );
+  clip-path: polygon(0% 8px,
+      8px 0%,
+      calc(100% - 4px) 0%,
+      100% 4px,
+      100% calc(100% - 8px),
+      calc(100% - 8px) 100%,
+      4px 100%,
+      0% calc(100% - 4px));
   z-index: -1;
 }
 
@@ -701,33 +696,29 @@
   bottom: -2px;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 10px 8px at 0% 0%, rgba(0,0,0,0.4) 0%, transparent 70%),
-    radial-gradient(ellipse 8px 10px at 100% 0%, rgba(0,0,0,0.35) 0%, transparent 70%),
-    radial-gradient(ellipse 9px 7px at 0% 100%, rgba(0,0,0,0.3) 0%, transparent 70%),
-    radial-gradient(ellipse 12px 10px at 100% 100%, rgba(0,0,0,0.45) 0%, transparent 70%);
+    radial-gradient(ellipse 10px 8px at 0% 0%, rgba(0, 0, 0, 0.4) 0%, transparent 70%),
+    radial-gradient(ellipse 8px 10px at 100% 0%, rgba(0, 0, 0, 0.35) 0%, transparent 70%),
+    radial-gradient(ellipse 9px 7px at 0% 100%, rgba(0, 0, 0, 0.3) 0%, transparent 70%),
+    radial-gradient(ellipse 12px 10px at 100% 100%, rgba(0, 0, 0, 0.45) 0%, transparent 70%);
 }
 
 /* ===== CYBERPUNK-SPECIFIC UTILITY CLASSES ===== */
 
 /* Cyberpunk clip corner */
 .clip-corner {
-  clip-path: polygon(
-    0 0,
-    100% 0,
-    100% calc(100% - 15px),
-    calc(100% - 15px) 100%,
-    0 100%
-  );
+  clip-path: polygon(0 0,
+      100% 0,
+      100% calc(100% - 15px),
+      calc(100% - 15px) 100%,
+      0 100%);
 }
 
 .clip-corner-top {
-  clip-path: polygon(
-    15px 0,
-    100% 0,
-    100% 100%,
-    0 100%,
-    0 15px
-  );
+  clip-path: polygon(15px 0,
+      100% 0,
+      100% 100%,
+      0 100%,
+      0 15px);
 }
 
 /* Cyberpunk border effect */
@@ -738,7 +729,10 @@
 .cyber-border::before {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   border: 1px solid var(--cyber-border);
   pointer-events: none;
 }
@@ -786,29 +780,126 @@
 
 /* ===== ANIMATIONS ===== */
 @keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 @keyframes fade-in {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== GITHUB MARKDOWN OVERRIDES ===== */
+/* Ensure readability in Cyberpunk/Dark themes if system preference doesn't match */
+
+[data-theme="cyberpunk"] .markdown-body {
+  color: #e6edf3 !important;
+  /* GitHub Dark text color */
+  background-color: transparent !important;
+}
+
+[data-theme="cyberpunk"] .markdown-body h1,
+[data-theme="cyberpunk"] .markdown-body h2,
+[data-theme="cyberpunk"] .markdown-body h3,
+[data-theme="cyberpunk"] .markdown-body h4,
+[data-theme="cyberpunk"] .markdown-body h5,
+[data-theme="cyberpunk"] .markdown-body h6 {
+  color: #e6edf3 !important;
+  border-bottom-color: var(--cyber-border) !important;
+}
+
+[data-theme="cyberpunk"] .markdown-body p,
+[data-theme="cyberpunk"] .markdown-body li,
+[data-theme="cyberpunk"] .markdown-body strong,
+[data-theme="cyberpunk"] .markdown-body em {
+  color: #e6edf3 !important;
+}
+
+[data-theme="cyberpunk"] .markdown-body a {
+  color: var(--cyber-cyan) !important;
+}
+
+[data-theme="cyberpunk"] .markdown-body pre {
+  background-color: var(--cyber-dark) !important;
+  border: 1px solid var(--cyber-border) !important;
+}
+
+[data-theme="cyberpunk"] .markdown-body code {
+  background-color: rgba(110, 118, 129, 0.4) !important;
+  /* GitHub Dark code bg */
+  color: #e6edf3 !important;
+}
+
+[data-theme="cyberpunk"] .markdown-body blockquote {
+  color: #8b949e !important;
+  border-left-color: var(--cyber-border) !important;
+}
+
+[data-theme="cyberpunk"] .markdown-body table tr {
+  background-color: transparent !important;
+  border-color: var(--cyber-border) !important;
+}
+
+[data-theme="cyberpunk"] .markdown-body table tr:nth-child(2n) {
+  background-color: rgba(22, 27, 34, 0.5) !important;
+}
+
+[data-theme="cyberpunk"] .markdown-body table td,
+[data-theme="cyberpunk"] .markdown-body table th {
+  border-color: var(--cyber-border) !important;
 }
 
 @keyframes stamp {
-  0% { transform: scale(1.2) rotate(-5deg); opacity: 0; }
-  50% { transform: scale(0.95) rotate(2deg); opacity: 1; }
-  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  0% {
+    transform: scale(1.2) rotate(-5deg);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(0.95) rotate(2deg);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
 }
 
 @keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 20px rgba(0, 240, 255, 0.4); }
-  50% { box-shadow: 0 0 30px rgba(0, 240, 255, 0.6); }
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+  }
+
+  50% {
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.6);
+  }
 }
 
 .animate-fade-in {
@@ -832,7 +923,7 @@
   background: #FDFCFA;
   position: relative;
   border: 2px solid var(--manga-ink) !important;
-  box-shadow: 
+  box-shadow:
     inset 0 0 40px rgba(200, 180, 150, 0.2),
     inset 0 0 100px rgba(180, 160, 130, 0.1),
     4px 4px 0 0 var(--manga-ink);
@@ -855,7 +946,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
+  background:
     url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
   pointer-events: none;
   border-radius: inherit;
@@ -897,37 +988,33 @@
 }
 
 /* Subtle fold line near top */
-.scroll-decoration > *:first-child::before {
+.scroll-decoration>*:first-child::before {
   content: '';
   position: absolute;
   top: 60px;
   left: 20px;
   right: 20px;
   height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(139, 119, 92, 0.08) 10%,
-    rgba(139, 119, 92, 0.12) 50%,
-    rgba(139, 119, 92, 0.08) 90%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(139, 119, 92, 0.08) 10%,
+      rgba(139, 119, 92, 0.12) 50%,
+      rgba(139, 119, 92, 0.08) 90%,
+      transparent 100%);
   pointer-events: none;
 }
 
-[data-theme="cyberpunk"] .scroll-decoration > *:first-child::before {
+[data-theme="cyberpunk"] .scroll-decoration>*:first-child::before {
   display: none;
 }
 
 /* Corner dog-ear effect (top-right) */
 .scroll-paper.scroll-decoration::before {
-  background: 
-    linear-gradient(
-      225deg,
+  background:
+    linear-gradient(225deg,
       rgba(220, 210, 195, 0.6) 0%,
       rgba(220, 210, 195, 0.3) 8px,
-      transparent 8px
-    ),
+      transparent 8px),
     url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
 }
 

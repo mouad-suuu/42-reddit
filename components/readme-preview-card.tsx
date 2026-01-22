@@ -74,6 +74,7 @@ export function ReadmePreviewCard({ readme, userVote, projectSlug }: ReadmePrevi
               initialUserVote={userVote}
               size="md"
               onAuthRequired={login}
+              readOnly={true}
             />
           </div>
 
@@ -155,13 +156,14 @@ export function ReadmePreviewCard({ readme, userVote, projectSlug }: ReadmePrevi
             </div>
 
             {/* Markdown preview */}
+            {/* Markdown preview */}
             <div
               className={cn(
-                "prose prose-sm max-w-none mb-3",
-                isCyberpunk
-                  ? "prose-invert prose-headings:text-white prose-p:text-gray-300 prose-a:text-[var(--cyber-cyan)] prose-code:text-[var(--cyber-purple)] prose-code:bg-[var(--cyber-dark)] prose-pre:bg-[var(--cyber-dark)]"
-                  : "prose-headings:text-foreground prose-p:text-foreground"
+                "mb-3 line-clamp-4",
+                "markdown-body",
+                isCyberpunk ? "markdown-cyberpunk" : ""
               )}
+              style={{ backgroundColor: 'transparent' }}
             >
               <ReactMarkdown remarkPlugins={[remarkGfm]}>
                 {previewContent}
