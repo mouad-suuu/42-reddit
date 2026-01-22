@@ -95,6 +95,12 @@
   --sidebar-accent-foreground: var(--manga-ink);
   --sidebar-border: var(--manga-ink);
   --sidebar-ring: var(--manga-ink);
+
+  /* Global Manga Font Override */
+  --font-sans: var(--font-manga);
+
+  /* Comic UI Polish */
+  --border-width: 3px;
 }
 
 /* ===== CYBERPUNK THEME ===== */
@@ -220,10 +226,107 @@
 }
 
 /* ===== MANGA THEME BODY STYLES ===== */
+/* ===== MANGA THEME BODY STYLES ===== */
+/* ===== MANGA THEME BODY STYLES ===== */
 [data-theme="manga"] body,
 :root:not([data-theme]) body {
   background-color: var(--manga-paper);
-  background-image: none;
+}
+
+/* Manga Layer Styles via ID (Smooth Transition) */
+#bg-layer-manga {
+  /* Manga paper texture + Clouds + Screentone */
+  background-image:
+    /* Screentone dots (ink) */
+    radial-gradient(var(--manga-ink) 1.5px, transparent 1.5px),
+    /* Cloud Layer 1 (White clouds) */
+    radial-gradient(circle at 15% 20%, #ffffff 0%, transparent 20%),
+    radial-gradient(circle at 85% 30%, #ffffff 0%, transparent 25%),
+    radial-gradient(ellipse at 50% 10%, #ffffff 0%, transparent 30%),
+    /* Sky Gradient (Light Grey to Paper) */
+    linear-gradient(to bottom, #dbeafe 0%, transparent 40%),
+    /* Diagonal hatch */
+    repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.02) 0px, rgba(0, 0, 0, 0.02) 1px, transparent 1px, transparent 10px);
+  background-size:
+    40px 40px,
+    100% 100%, 100% 100%, 100% 100%,
+    100% 100%,
+    100% 100%;
+  background-size:
+    20px 20px,
+    100% 100%, 100% 100%, 100% 100%,
+    100% 100%,
+    100% 100%;
+  /* Animate clouds drifting slowly */
+  animation: manga-cloud-drift 60s linear infinite alternate;
+}
+
+/* Activate manga layer when theme is manga */
+[data-theme="manga"] #bg-layer-manga,
+:root:not([data-theme]) #bg-layer-manga {
+  opacity: 1;
+}
+
+/* Paper grain/noise overlay - now part of the layer or separate */
+[data-theme="manga"] #bg-layer-manga::before,
+:root:not([data-theme]) #bg-layer-manga::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.03;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+@keyframes manga-cloud-drift {
+  0% {
+    background-position: 0px 0px;
+  }
+
+  100% {
+    background-position: 50px 20px;
+  }
+}
+
+/* Manga Action Button */
+.manga-button-action {
+  position: relative;
+  background: var(--manga-ink);
+  color: var(--manga-paper);
+  border: 3px solid var(--manga-ink);
+  box-shadow: 8px 8px 0px var(--manga-gray);
+  clip-path: polygon(2% 0%, 100% 0%, 100% 90%, 95% 100%, 0% 100%, 0% 10%);
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: visible;
+}
+
+.manga-button-action:hover {
+  transform: scale(1.05) rotate(-1deg);
+  box-shadow: 12px 12px 0px var(--manga-ink);
+  background: var(--manga-paper) !important;
+  color: var(--manga-ink) !important;
+  border-color: var(--manga-ink);
+}
+
+.manga-button-action::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  border: 1px solid var(--manga-ink);
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: -1;
+  transform: rotate(2deg);
+}
+
+.manga-button-action:hover::before {
+  opacity: 1;
 }
 
 /* Manga scrollbar */
@@ -251,36 +354,136 @@
 /* ===== CYBERPUNK THEME BODY STYLES ===== */
 [data-theme="cyberpunk"] body {
   background-color: var(--cyber-black);
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .font-manga {
+    font-family: var(--font-manga), cursive;
+    letter-spacing: 0.05em;
+  }
+}
+
+/* ... existing code ... */
+
+/* Cyberpunk Layer Styles via ID (Smooth Transition) */
+#bg-layer-cyber {
+  /* Two-layer grid + STAR PARTICLES */
   background-image:
-    linear-gradient(rgba(18, 18, 26, 0.7) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(18, 18, 26, 0.7) 1px, transparent 1px);
-  background-size: 40px 40px;
-  position: relative;
+    /* Stars/Particles - Bright dots */
+    radial-gradient(white 1px, transparent 1.5px),
+    radial-gradient(rgba(0, 240, 255, 0.8) 1.5px, transparent 2px),
+    /* Grid */
+    linear-gradient(rgba(0, 240, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size:
+    50px 50px,
+    90px 90px,
+    100px 100px, 100px 100px,
+    20px 20px, 20px 20px;
+  background-position:
+    0 0,
+    15px 15px,
+    -1px -1px, -1px -1px,
+    -1px -1px, -1px -1px;
+
+  /* Animate the grid to scroll */
+  animation: cyber-grid-scroll 20s linear infinite;
 }
 
-/* Colorful glow effects behind the grid */
-[data-theme="cyberpunk"] body::before {
+/* Activate cyber layer when theme is cyberpunk */
+[data-theme="cyberpunk"] #bg-layer-cyber {
+  opacity: 1;
+}
+
+/* Animated background glows */
+#bg-layer-cyber::before {
   content: '';
-  position: fixed;
+  position: absolute;
   top: 0;
-  right: 0;
-  width: 60%;
-  height: 60%;
-  background: radial-gradient(ellipse at top right, rgba(0, 240, 255, 0.12) 0%, transparent 60%);
-  pointer-events: none;
-  z-index: -1;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 80% 20%, rgba(188, 19, 254, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 20% 80%, rgba(10, 255, 104, 0.1) 0%, transparent 40%);
+  filter: blur(60px);
+  animation: pulse-glow 6s ease-in-out infinite alternate;
 }
 
-[data-theme="cyberpunk"] body::after {
+/* Scanline effect */
+#bg-layer-cyber::after {
   content: '';
-  position: fixed;
-  bottom: 0;
+  position: absolute;
+  top: 0;
   left: 0;
-  width: 60%;
-  height: 60%;
-  background: radial-gradient(ellipse at bottom left, rgba(188, 19, 254, 0.12) 0%, transparent 60%);
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(0deg,
+      transparent 0px,
+      transparent 1px,
+      rgba(0, 240, 255, 0.03) 2px,
+      rgba(0, 240, 255, 0.03) 3px);
+  backdrop-filter: contrast(120%) brightness(110%);
+  opacity: 0.4;
   pointer-events: none;
-  z-index: -1;
+}
+
+@keyframes cyber-grid-scroll {
+  0% {
+    background-position:
+      0 0,
+      /* Stars 1 */
+      15px 15px,
+      /* Stars 2 */
+      -1px -1px,
+      /* Grid 1 */
+      -1px -1px,
+      /* Grid 1R */
+      -1px -1px,
+      /* Grid 2 */
+      -1px -1px;
+    /* Grid 2R */
+  }
+
+  100% {
+    background-position:
+      0 50px,
+      /* Stars 1 (+50px) */
+      15px 105px,
+      /* Stars 2 (+90px) */
+      -1px 99px,
+      /* Grid 1 (+100px) */
+      -1px 99px,
+      /* Grid 1R */
+      -1px 19px,
+      /* Grid 2 (+20px) */
+      -1px 19px;
+    /* Grid 2R */
+  }
+}
+
+@keyframes pulse-glow {
+  0% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
 }
 
 /* Cyberpunk selection styling */
@@ -304,6 +507,106 @@
 
 [data-theme="cyberpunk"] ::-webkit-scrollbar-thumb:hover {
   background: var(--cyber-cyan);
+}
+
+/* Cyberpunk Button - Advanced Glitch & Glow */
+.cyber-button {
+  position: relative;
+  /* Fill the box: Dark semi-transparent background for readability */
+  background: rgba(5, 5, 10, 0.7);
+  backdrop-filter: blur(4px);
+  /* Fix text visibility: Force Cyan */
+  color: var(--cyber-cyan) !important;
+  font-family: var(--font-display);
+  border: 2px solid var(--cyber-cyan);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  overflow: hidden;
+  transition: 0.3s;
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 92% 100%, 0 100%);
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.15), inset 0 0 20px rgba(0, 240, 255, 0.05);
+  z-index: 1;
+  /* For stacking context */
+}
+
+.cyber-button:hover {
+  /* background: var(--cyber-cyan); <-- Handled by ::after now */
+  color: var(--cyber-black) !important;
+  box-shadow: 0 0 30px rgba(0, 240, 255, 0.6), 0 0 60px rgba(0, 240, 255, 0.4);
+  text-shadow: none;
+}
+
+/* Scanline Highlight - REMOVED ANIMATION */
+.cyber-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  transition: 0.5s;
+  /* animation: cyber-scan 3s infinite linear; REMOVED per user request */
+  z-index: 2;
+  /* Scanline on top of fill */
+}
+
+/* Side Fill Animation */
+.cyber-button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 100%;
+  background: var(--cyber-cyan);
+  transition: width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 0;
+  /* Behind text (which is z-10 in component) but above base bg */
+}
+
+.cyber-button:hover::after {
+  width: 100%;
+}
+
+@keyframes cyber-scan {
+  0% {
+    left: -100%;
+  }
+
+  20% {
+    left: 100%;
+  }
+
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes cyber-glitch {
+  0% {
+    transform: translate(0);
+  }
+
+  20% {
+    transform: translate(-2px, 2px);
+  }
+
+  40% {
+    transform: translate(-2px, -2px);
+  }
+
+  60% {
+    transform: translate(2px, 2px);
+  }
+
+  80% {
+    transform: translate(2px, -2px);
+  }
+
+  100% {
+    transform: translate(0);
+  }
 }
 
 @layer utilities {
@@ -388,9 +691,20 @@
   box-shadow: 8px 8px 0px 0px var(--manga-ink);
 }
 
+/* Lively Manga Interaction */
+.manga-shadow-hover {
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
 .manga-shadow-hover:hover {
   box-shadow: 8px 8px 0px 0px var(--manga-ink);
-  transform: translate(-2px, -2px);
+  transform: translate(-3px, -3px);
+  z-index: 10;
+}
+
+.manga-shadow-hover:active {
+  box-shadow: 2px 2px 0px 0px var(--manga-ink);
+  transform: translate(0px, 0px);
 }
 
 /* Cyberpunk theme: replace manga shadows with subtle glows */
@@ -498,6 +812,7 @@
 }
 
 /* Hand-drawn progress bar */
+/* Hand-drawn progress bar */
 .hand-drawn-progress {
   position: relative;
   height: 12px;
@@ -506,6 +821,31 @@
   border-radius: 1px 3px 2px 4px;
   overflow: hidden;
 }
+
+/* Vote Animation */
+@keyframes vote-pop {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.5);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-vote-pop {
+  animation: vote-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Thicker borders for Manga theme */
+[data-theme="manga"] .border-2 {
+  border-width: 3px;
+}
+
 
 .hand-drawn-progress-fill {
   height: 100%;

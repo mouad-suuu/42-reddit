@@ -109,10 +109,13 @@ export const cyberpunkStatusColors: Record<string, string> = {
 export const cyberpunkBodyStyles = {
   backgroundColor: cyberpunkColors.black,
   backgroundImage: [
-    "linear-gradient(rgba(18, 18, 26, 0.7) 1px, transparent 1px)",
-    "linear-gradient(90deg, rgba(18, 18, 26, 0.7) 1px, transparent 1px)",
+    "linear-gradient(rgba(0, 240, 255, 0.05) 1px, transparent 1px)",
+    "linear-gradient(90deg, rgba(0, 240, 255, 0.05) 1px, transparent 1px)",
+    "linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px)",
+    "linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px)",
   ],
-  backgroundSize: "40px 40px",
+  backgroundSize: "100px 100px, 100px 100px, 20px 20px, 20px 20px",
+  backgroundPosition: "-1px -1px, -1px -1px, -1px -1px, -1px -1px",
 } as const;
 
 export const cyberpunkScrollbarStyles = {

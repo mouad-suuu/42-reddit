@@ -160,9 +160,8 @@ export default function ProfilePage() {
     return (
       <div className="min-h-[80vh] flex items-center justify-center">
         <Loader2
-          className={`h-12 w-12 animate-spin ${
-            isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-primary"
-          }`}
+          className={`h-12 w-12 animate-spin ${isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-primary"
+            }`}
         />
       </div>
     );
@@ -178,9 +177,8 @@ export default function ProfilePage() {
     return (
       <div className="min-h-[80vh] flex items-center justify-center">
         <Loader2
-          className={`h-12 w-12 animate-spin ${
-            isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-primary"
-          }`}
+          className={`h-12 w-12 animate-spin ${isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-primary"
+            }`}
         />
       </div>
     );
@@ -191,24 +189,21 @@ export default function ProfilePage() {
     return (
       <div className="container mx-auto px-6 py-10">
         <div
-          className={`text-center py-20 ${
-            isCyberpunk
-              ? "bg-[var(--cyber-panel)] border border-red-500/50"
-              : "bg-card border-2 border-destructive manga-shadow"
-          }`}
+          className={`text-center py-20 ${isCyberpunk
+            ? "bg-[var(--cyber-panel)] border border-red-500/50"
+            : "bg-card border-2 border-destructive manga-shadow"
+            }`}
         >
           <div className="text-6xl mb-6">⚠️</div>
           <h2
-            className={`text-2xl font-display font-bold mb-4 ${
-              isCyberpunk ? "text-white" : "text-foreground"
-            }`}
+            className={`text-2xl font-display font-bold mb-4 ${isCyberpunk ? "text-white" : "text-foreground"
+              }`}
           >
             Error Loading Profile
           </h2>
           <p
-            className={`mb-8 ${
-              isCyberpunk ? "text-gray-400" : "text-muted-foreground"
-            }`}
+            className={`mb-8 ${isCyberpunk ? "text-gray-400" : "text-muted-foreground"
+              }`}
           >
             {error}
           </p>
@@ -236,11 +231,10 @@ export default function ProfilePage() {
     <div className="container mx-auto px-6 py-10">
       {/* Profile Header */}
       <div
-        className={`p-8 mb-8 ${
-          isCyberpunk
-            ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)]"
-            : "bg-card border-2 border-border manga-shadow"
-        }`}
+        className={`p-8 mb-8 ${isCyberpunk
+          ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)]"
+          : "bg-card border-2 border-border manga-shadow"
+          }`}
       >
         <div className="flex flex-col md:flex-row gap-8 items-start">
           {/* Avatar & Basic Info */}
@@ -253,24 +247,21 @@ export default function ProfilePage() {
             </Avatar>
             <div>
               <h1
-                className={`text-3xl font-display font-black uppercase mb-1 ${
-                  isCyberpunk ? "cyber-gradient-text" : "text-foreground"
-                }`}
+                className={`text-3xl font-display font-black uppercase mb-1 ${isCyberpunk ? "cyber-gradient-text" : "text-foreground"
+                  }`}
               >
                 {user.displayName}
               </h1>
               <p
-                className={`text-lg font-mono ${
-                  isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-muted-foreground"
-                }`}
+                className={`text-lg font-mono ${isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-muted-foreground"
+                  }`}
               >
                 @{user.login}
               </p>
               {user.campus && (
                 <p
-                  className={`text-sm mt-1 ${
-                    isCyberpunk ? "text-gray-400" : "text-muted-foreground"
-                  }`}
+                  className={`text-sm mt-1 ${isCyberpunk ? "text-gray-400" : "text-muted-foreground"
+                    }`}
                 >
                   📍 {user.campus.name}, {user.campus.country}
                 </p>
@@ -282,91 +273,79 @@ export default function ProfilePage() {
           <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4 md:ml-auto">
             {cursus && (
               <div
-                className={`text-center p-4 ${
-                  isCyberpunk
-                    ? "bg-[var(--cyber-dark)] border border-[var(--cyber-border)]"
-                    : "bg-secondary border-2 border-border"
-                }`}
+                className={`text-center p-4 ${isCyberpunk
+                  ? "bg-[var(--cyber-dark)] border border-[var(--cyber-border)]"
+                  : "bg-secondary border-2 border-border"
+                  }`}
               >
                 <div
-                  className={`text-2xl font-display font-black ${
-                    isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-foreground"
-                  }`}
+                  className={`text-2xl font-display font-black ${isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-foreground"
+                    }`}
                 >
                   {cursus.level.toFixed(2)}
                 </div>
                 <div
-                  className={`text-xs uppercase font-bold ${
-                    isCyberpunk ? "text-gray-500" : "text-muted-foreground"
-                  }`}
+                  className={`text-xs uppercase font-bold ${isCyberpunk ? "text-gray-500" : "text-muted-foreground"
+                    }`}
                 >
                   Level
                 </div>
               </div>
             )}
             <div
-              className={`text-center p-4 ${
-                isCyberpunk
-                  ? "bg-[var(--cyber-dark)] border border-[var(--cyber-border)]"
-                  : "bg-secondary border-2 border-border"
-              }`}
+              className={`text-center p-4 ${isCyberpunk
+                ? "bg-[var(--cyber-dark)] border border-[var(--cyber-border)]"
+                : "bg-secondary border-2 border-border"
+                }`}
             >
               <div
-                className={`text-2xl font-display font-black ${
-                  isCyberpunk ? "text-[var(--cyber-green)]" : "text-foreground"
-                }`}
+                className={`text-2xl font-display font-black ${isCyberpunk ? "text-[var(--cyber-green)]" : "text-foreground"
+                  }`}
               >
                 {user.correctionPoints}
               </div>
               <div
-                className={`text-xs uppercase font-bold ${
-                  isCyberpunk ? "text-gray-500" : "text-muted-foreground"
-                }`}
+                className={`text-xs uppercase font-bold ${isCyberpunk ? "text-gray-500" : "text-muted-foreground"
+                  }`}
               >
                 Eval Points
               </div>
             </div>
             <div
-              className={`text-center p-4 ${
-                isCyberpunk
-                  ? "bg-[var(--cyber-dark)] border border-[var(--cyber-border)]"
-                  : "bg-secondary border-2 border-border"
-              }`}
+              className={`text-center p-4 ${isCyberpunk
+                ? "bg-[var(--cyber-dark)] border border-[var(--cyber-border)]"
+                : "bg-secondary border-2 border-border"
+                }`}
             >
               <div
-                className={`text-2xl font-display font-black ${
-                  isCyberpunk ? "text-[var(--cyber-purple)]" : "text-foreground"
-                }`}
+                className={`text-2xl font-display font-black ${isCyberpunk ? "text-[var(--cyber-purple)]" : "text-foreground"
+                  }`}
               >
                 {user.wallet}
               </div>
               <div
-                className={`text-xs uppercase font-bold ${
-                  isCyberpunk ? "text-gray-500" : "text-muted-foreground"
-                }`}
+                className={`text-xs uppercase font-bold ${isCyberpunk ? "text-gray-500" : "text-muted-foreground"
+                  }`}
               >
                 Wallet
               </div>
             </div>
             {user.location && (
               <div
-                className={`text-center p-4 ${
-                  isCyberpunk
-                    ? "bg-[var(--cyber-dark)] border border-[var(--cyber-cyan)]/50"
-                    : "bg-green-50 border-2 border-green-200"
-                }`}
+                className={`text-center p-4 ${isCyberpunk
+                  ? "bg-[var(--cyber-dark)] border border-[var(--cyber-cyan)]/50"
+                  : "bg-green-50 border-2 border-green-200"
+                  }`}
               >
                 <div
-                  className={`text-lg font-mono font-bold ${
-                    isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-green-700"
-                  }`}
+                  className={`text-lg font-mono font-bold ${isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-green-700"
+                    }`}
                 >
                   {user.location}
                 </div>
                 <div
-                  className={`text-xs uppercase font-bold ${
-                    isCyberpunk ? "text-gray-500" : "text-muted-foreground"
-                  }`}
+                  className={`text-xs uppercase font-bold ${isCyberpunk ? "text-gray-500" : "text-muted-foreground"
+                    }`}
                 >
                   Location
                 </div>
@@ -378,14 +357,13 @@ export default function ProfilePage() {
         {/* Blackhole warning */}
         {cursus?.blackholedAt && (
           <div
-            className={`mt-6 p-4 ${
-              isCyberpunk
-                ? "bg-red-500/10 border border-red-500/50"
-                : "bg-red-50 border-2 border-red-200"
-            }`}
+            className={`mt-6 p-4 ${isCyberpunk
+              ? "bg-red-500/10 border border-red-500/50"
+              : "bg-red-50 border-2 border-red-200"
+              }`}
           >
             <p className={`font-mono text-sm ${isCyberpunk ? "text-red-400" : "text-red-700"}`}>
-               Black Hole:{" "}
+              Black Hole:{" "}
               <span className="font-bold">
                 {new Date(cursus.blackholedAt).toLocaleDateString("en-FR", {
                   year: "numeric",
@@ -401,20 +379,18 @@ export default function ProfilePage() {
       {/* In Progress Projects */}
       <div className="mb-8">
         <h2
-          className={`text-2xl font-display font-black uppercase mb-6 ${
-            isCyberpunk ? "text-white" : "text-foreground"
-          }`}
+          className={`text-2xl font-display font-black uppercase mb-6 ${isCyberpunk ? "text-white" : "text-foreground"
+            }`}
         >
           Current Projects ({inProgressProjects.length})
         </h2>
 
         {inProgressProjects.length === 0 ? (
           <Card
-            className={`p-8 text-center ${
-              isCyberpunk
-                ? "bg-[var(--cyber-panel)] border-[var(--cyber-border)]"
-                : "border-2 border-border"
-            }`}
+            className={`p-8 text-center ${isCyberpunk
+              ? "bg-[var(--cyber-panel)] border-[var(--cyber-border)]"
+              : "border-2 border-border"
+              }`}
           >
             <div className="text-4xl mb-4">🎉</div>
             <p className={isCyberpunk ? "text-gray-400" : "text-muted-foreground"}>
@@ -428,17 +404,15 @@ export default function ProfilePage() {
               return (
                 <Link href={`/projects/${project.slug}`} key={project.id}>
                   <Card
-                    className={`p-5 h-full transition-all cursor-pointer ${
-                      isCyberpunk
-                        ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)] hover:border-[var(--cyber-cyan)]"
-                        : "border-2 border-border hover:manga-shadow-lg"
-                    }`}
+                    className={`p-5 h-full transition-all cursor-pointer ${isCyberpunk
+                      ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)] hover:border-[var(--cyber-cyan)]"
+                      : "border-2 border-border manga-shadow-hover"
+                      }`}
                   >
                     <div className="flex items-start justify-between mb-3">
                       <h3
-                        className={`font-display font-bold uppercase ${
-                          isCyberpunk ? "text-white" : "text-foreground"
-                        }`}
+                        className={`font-display font-bold uppercase ${isCyberpunk ? "text-white" : "text-foreground"
+                          }`}
                       >
                         {project.name}
                       </h3>
@@ -450,9 +424,8 @@ export default function ProfilePage() {
                       </Badge>
                     </div>
                     <p
-                      className={`text-xs font-mono ${
-                        isCyberpunk ? "text-gray-500" : "text-muted-foreground"
-                      }`}
+                      className={`text-xs font-mono ${isCyberpunk ? "text-gray-500" : "text-muted-foreground"
+                        }`}
                     >
                       Started{" "}
                       {new Date(project.createdAt).toLocaleDateString("en-US", {
@@ -474,20 +447,18 @@ export default function ProfilePage() {
       {/* Recent Finished Projects */}
       <div className="mb-8">
         <h2
-          className={`text-2xl font-display font-black uppercase mb-6 ${
-            isCyberpunk ? "text-white" : "text-foreground"
-          }`}
+          className={`text-2xl font-display font-black uppercase mb-6 ${isCyberpunk ? "text-white" : "text-foreground"
+            }`}
         >
           Recently Completed ({stats.finishedProjects})
         </h2>
 
         {finishedProjects.length === 0 ? (
           <Card
-            className={`p-8 text-center ${
-              isCyberpunk
-                ? "bg-[var(--cyber-panel)] border-[var(--cyber-border)]"
-                : "border-2 border-border"
-            }`}
+            className={`p-8 text-center ${isCyberpunk
+              ? "bg-[var(--cyber-panel)] border-[var(--cyber-border)]"
+              : "border-2 border-border"
+              }`}
           >
             <p className={isCyberpunk ? "text-gray-400" : "text-muted-foreground"}>
               No completed projects yet. Keep going!
@@ -498,17 +469,15 @@ export default function ProfilePage() {
             {finishedProjects.map((project) => (
               <Link href={`/projects/${project.slug}`} key={project.id}>
                 <Card
-                  className={`p-4 h-full transition-all cursor-pointer ${
-                    isCyberpunk
-                      ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)] hover:border-[var(--cyber-cyan)]"
-                      : "border-2 border-border hover:manga-shadow"
-                  }`}
+                  className={`p-4 h-full transition-all cursor-pointer ${isCyberpunk
+                    ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)] hover:border-[var(--cyber-cyan)]"
+                    : "border-2 border-border manga-shadow-hover"
+                    }`}
                 >
                   <div className="flex items-center justify-between mb-2">
                     <h3
-                      className={`font-display font-bold text-sm uppercase truncate ${
-                        isCyberpunk ? "text-white" : "text-foreground"
-                      }`}
+                      className={`font-display font-bold text-sm uppercase truncate ${isCyberpunk ? "text-white" : "text-foreground"
+                        }`}
                     >
                       {project.name}
                     </h3>
@@ -516,22 +485,20 @@ export default function ProfilePage() {
                   <div className="flex items-center justify-between">
                     <Badge
                       variant="outline"
-                      className={`font-mono font-bold ${
-                        project.validated
-                          ? isCyberpunk
-                            ? "border-[var(--cyber-green)] text-[var(--cyber-green)] bg-[var(--cyber-green)]/10"
-                            : "border-green-600 text-green-700 bg-green-50"
-                          : isCyberpunk
+                      className={`font-mono font-bold ${project.validated
+                        ? isCyberpunk
+                          ? "border-[var(--cyber-green)] text-[var(--cyber-green)] bg-[var(--cyber-green)]/10"
+                          : "border-green-600 text-green-700 bg-green-50"
+                        : isCyberpunk
                           ? "border-red-500 text-red-500 bg-red-500/10"
                           : "border-red-600 text-red-700 bg-red-50"
-                      }`}
+                        }`}
                     >
                       {project.finalMark}%
                     </Badge>
                     <span
-                      className={`text-xs ${
-                        isCyberpunk ? "text-gray-500" : "text-muted-foreground"
-                      }`}
+                      className={`text-xs ${isCyberpunk ? "text-gray-500" : "text-muted-foreground"
+                        }`}
                     >
                       {project.markedAt &&
                         new Date(project.markedAt).toLocaleDateString("en-US", {
@@ -551,18 +518,16 @@ export default function ProfilePage() {
       {cursus?.skills && cursus.skills.length > 0 && (
         <div>
           <h2
-            className={`text-2xl font-display font-black uppercase mb-6 ${
-              isCyberpunk ? "text-white" : "text-foreground"
-            }`}
+            className={`text-2xl font-display font-black uppercase mb-6 ${isCyberpunk ? "text-white" : "text-foreground"
+              }`}
           >
-           Skills
+            Skills
           </h2>
           <Card
-            className={`p-6 ${
-              isCyberpunk
-                ? "bg-[var(--cyber-panel)] border-[var(--cyber-border)]"
-                : "border-2 border-border"
-            }`}
+            className={`p-6 ${isCyberpunk
+              ? "bg-[var(--cyber-panel)] border-[var(--cyber-border)]"
+              : "border-2 border-border"
+              }`}
           >
             <div className="space-y-4">
               {cursus.skills
@@ -571,31 +536,27 @@ export default function ProfilePage() {
                   <div key={skill.id}>
                     <div className="flex justify-between mb-1">
                       <span
-                        className={`text-sm font-bold ${
-                          isCyberpunk ? "text-white" : "text-foreground"
-                        }`}
+                        className={`text-sm font-bold ${isCyberpunk ? "text-white" : "text-foreground"
+                          }`}
                       >
                         {skill.name}
                       </span>
                       <span
-                        className={`text-sm font-mono ${
-                          isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-foreground"
-                        }`}
+                        className={`text-sm font-mono ${isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-foreground"
+                          }`}
                       >
                         {skill.level.toFixed(2)}
                       </span>
                     </div>
                     <div
-                      className={`h-2 ${
-                        isCyberpunk ? "bg-[var(--cyber-dark)]" : "bg-secondary"
-                      }`}
+                      className={`h-2 ${isCyberpunk ? "bg-[var(--cyber-dark)]" : "bg-secondary"
+                        }`}
                     >
                       <div
-                        className={`h-full ${
-                          isCyberpunk
-                            ? "bg-gradient-to-r from-[var(--cyber-cyan)] to-[var(--cyber-purple)]"
-                            : "bg-foreground"
-                        }`}
+                        className={`h-full ${isCyberpunk
+                          ? "bg-gradient-to-r from-[var(--cyber-cyan)] to-[var(--cyber-purple)]"
+                          : "bg-foreground"
+                          }`}
                         style={{ width: `${Math.min((skill.level / 20) * 100, 100)}%` }}
                       />
                     </div>

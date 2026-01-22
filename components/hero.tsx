@@ -31,9 +31,8 @@ export function Hero() {
     return (
       <section className="min-h-[80vh] flex items-center justify-center">
         <Loader2
-          className={`h-12 w-12 animate-spin ${
-            isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-primary"
-          }`}
+          className={`h-12 w-12 animate-spin ${isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-primary"
+            }`}
         />
       </section>
     );
@@ -50,29 +49,26 @@ export function Hero() {
         <div className="max-w-3xl mx-auto text-center">
           {/* Logo/Brand */}
           <div
-            className={`inline-flex items-center justify-center w-24 h-24 mb-8 text-5xl font-display font-black ${
-              isCyberpunk
-                ? "bg-[var(--cyber-panel)] border-2 border-[var(--cyber-cyan)] text-[var(--cyber-cyan)]"
-                : "bg-card border-4 border-border manga-shadow"
-            }`}
+            className={`inline-flex items-center justify-center w-24 h-24 mb-8 text-5xl font-display font-black ${isCyberpunk
+              ? "bg-[var(--cyber-panel)] border-2 border-[var(--cyber-cyan)] text-[var(--cyber-cyan)]"
+              : "bg-card border-4 border-border manga-shadow"
+              }`}
           >
             42
           </div>
 
           {/* Title */}
           <h1
-            className={`text-5xl md:text-6xl font-display font-black uppercase mb-6 leading-tight ${
-              isCyberpunk ? "cyber-gradient-text" : "text-foreground"
-            }`}
+            className={`text-5xl md:text-6xl font-display font-black uppercase mb-6 leading-tight ${isCyberpunk ? "cyber-gradient-text" : "text-foreground"
+              }`}
           >
             42 Reddit
           </h1>
 
           {/* Description */}
           <p
-            className={`text-xl md:text-2xl mb-4 max-w-xl mx-auto ${
-              isCyberpunk ? "text-gray-300" : "text-foreground"
-            }`}
+            className={`text-xl md:text-2xl mb-4 max-w-xl mx-auto ${isCyberpunk ? "text-gray-300" : "text-foreground"
+              }`}
           >
             The community platform for{" "}
             <span
@@ -85,9 +81,8 @@ export function Hero() {
           </p>
 
           <p
-            className={`text-lg mb-10 max-w-lg mx-auto ${
-              isCyberpunk ? "text-gray-500" : "text-muted-foreground"
-            }`}
+            className={`text-lg mb-10 max-w-lg mx-auto ${isCyberpunk ? "text-gray-500" : "text-muted-foreground"
+              }`}
           >
             Share READMEs, discuss projects, ask questions, and help fellow
             students on their 42 journey.
@@ -97,20 +92,20 @@ export function Hero() {
           <Button
             asChild
             size="lg"
-            className={`text-xl px-12 py-7 font-display font-bold uppercase ${
-              isCyberpunk
-                ? "bg-[var(--cyber-cyan)] text-black hover:bg-[var(--cyber-cyan)]/80 hover:scale-105 transition-transform"
-                : "manga-shadow hover:manga-shadow-lg transition-shadow"
-            }`}
+            className={`text-xl px-12 py-8 font-display font-black uppercase tracking-wider ${isCyberpunk
+              ? "cyber-button"
+              : "manga-button-action"
+              }`}
           >
-            <Link href="/api/auth/42">Login with 42</Link>
+            <Link href="/api/auth/42">
+              <span className="relative z-10">Login with 42</span>
+            </Link>
           </Button>
 
           {/* Subtle tagline */}
           <p
-            className={`mt-8 text-sm font-mono ${
-              isCyberpunk ? "text-gray-600" : "text-muted-foreground"
-            }`}
+            className={`mt-8 text-sm font-mono ${isCyberpunk ? "text-gray-600" : "text-muted-foreground"
+              }`}
           >
             Authenticate with your 42 intra account to join
           </p>

@@ -18,7 +18,7 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-const STORAGE_KEY = "praxis-theme";
+const STORAGE_KEY = "praxis-theme-v2"; // Changed to force reset to default
 const DEFAULT_THEME: Theme = "manga";
 
 /**
@@ -26,21 +26,19 @@ const DEFAULT_THEME: Theme = "manga";
  * Reads/writes theme preference to localStorage, applies data-theme to HTML.
  */
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  // Initialize theme from localStorage or default
-  const [theme, setThemeState] = useState<Theme>(() => {
+  // Initialize theme with default to ensure server/client match during hydration
+  const [theme, setThemeState] = useState<Theme>(DEFAULT_THEME);
+  const [mounted, setMounted] = useState(false);
+
+  // Sync with localStorage after mount
+  useEffect(() => {
+    setMounted(true);
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
       if (stored && (stored === "cyberpunk" || stored === "manga")) {
-        return stored;
+        setThemeState(stored);
       }
     }
-    return DEFAULT_THEME;
-  });
-  const [mounted, setMounted] = useState(false);
-
-  // Mark as mounted after initial render
-  useEffect(() => {
-    setMounted(true);
   }, []);
 
   // Apply theme to HTML element and persist to localStorage
@@ -80,8 +78,8 @@ export function useTheme() {
   if (context === undefined) {
     return {
       theme: "manga" as Theme,
-      setTheme: () => {},
-      toggleTheme: () => {},
+      setTheme: () => { },
+      toggleTheme: () => { },
     };
   }
   return context;

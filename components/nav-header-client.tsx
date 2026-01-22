@@ -60,8 +60,8 @@ export function NavHeaderClient() {
             </div>
             <span
               className={cn(
-                "font-display font-bold text-2xl tracking-wider",
-                isCyberpunk ? "text-white" : "text-foreground"
+                "font-bold tracking-wider",
+                isCyberpunk ? "font-display text-2xl text-white" : "font-manga text-3xl tracking-widest text-foreground"
               )}
             >
               42 Reddit
@@ -85,17 +85,17 @@ export function NavHeaderClient() {
                     "flex items-center gap-2 px-4 py-2 text-sm font-bold uppercase tracking-wider transition-all",
                     isCyberpunk
                       ? cn(
-                          "border border-transparent",
-                          active
-                            ? "bg-[var(--cyber-cyan)]/20 border-[var(--cyber-cyan)] text-[var(--cyber-cyan)]"
-                            : "text-gray-400 hover:text-white hover:border-[var(--cyber-border)]"
-                        )
+                        "border border-transparent",
+                        active
+                          ? "bg-[var(--cyber-cyan)]/20 border-[var(--cyber-cyan)] text-[var(--cyber-cyan)]"
+                          : "text-gray-400 hover:text-white hover:border-[var(--cyber-border)]"
+                      )
                       : cn(
-                          "border-2 border-transparent",
-                          active
-                            ? "bg-primary text-primary-foreground"
-                            : "text-muted-foreground hover:text-foreground hover:border-border"
-                        )
+                        "border-2 border-transparent",
+                        active
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground hover:text-foreground hover:border-border"
+                      )
                   )}
                 >
                   <Icon className="h-4 w-4" />
@@ -183,7 +183,7 @@ export function NavHeaderClient() {
                 asChild
                 className={cn(
                   isCyberpunk &&
-                    "bg-transparent border border-[var(--cyber-cyan)] text-[var(--cyber-cyan)] hover:bg-[var(--cyber-cyan)] hover:text-black px-4 py-1.5 text-sm font-bold uppercase tracking-wider transition-all"
+                  "bg-transparent border border-[var(--cyber-cyan)] text-[var(--cyber-cyan)] hover:bg-[var(--cyber-cyan)] hover:text-black px-4 py-1.5 text-sm font-bold uppercase tracking-wider transition-all"
                 )}
                 variant={isCyberpunk ? undefined : "outline"}
                 size="sm"
@@ -211,17 +211,17 @@ export function NavHeaderClient() {
                     "flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all",
                     isCyberpunk
                       ? cn(
-                          "border",
-                          active
-                            ? "bg-[var(--cyber-cyan)]/20 border-[var(--cyber-cyan)] text-[var(--cyber-cyan)]"
-                            : "border-[var(--cyber-border)] text-gray-400"
-                        )
+                        "border",
+                        active
+                          ? "bg-[var(--cyber-cyan)]/20 border-[var(--cyber-cyan)] text-[var(--cyber-cyan)]"
+                          : "border-[var(--cyber-border)] text-gray-400"
+                      )
                       : cn(
-                          "border-2",
-                          active
-                            ? "bg-primary text-primary-foreground border-primary"
-                            : "border-border text-muted-foreground"
-                        )
+                        "border-2",
+                        active
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "border-border text-muted-foreground"
+                      )
                   )}
                 >
                   <Icon className="h-3 w-3" />

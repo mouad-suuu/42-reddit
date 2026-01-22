@@ -119,7 +119,7 @@ export function VoteButton({
           userVote === 1
             ? isCyberpunk
               ? "text-[var(--cyber-cyan)] bg-[var(--cyber-cyan)]/20"
-              : "text-primary bg-primary/10"
+              : "text-primary bg-primary/10 animate-vote-pop" // Added animation
             : isCyberpunk
               ? "text-gray-500 hover:text-[var(--cyber-cyan)] hover:bg-[var(--cyber-cyan)]/10"
               : "text-muted-foreground hover:text-primary hover:bg-primary/10",
@@ -156,7 +156,7 @@ export function VoteButton({
           buttonSize,
           readOnly ? "cursor-default" : "cursor-pointer",
           userVote === -1
-            ? "text-destructive bg-destructive/20"
+            ? "text-destructive bg-destructive/20 animate-vote-pop" // Added animation
             : isCyberpunk
               ? "text-gray-500 hover:text-destructive hover:bg-destructive/10"
               : "text-muted-foreground hover:text-destructive hover:bg-destructive/10",

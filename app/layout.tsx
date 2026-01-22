@@ -1,6 +1,6 @@
 import type React from "react";
 import type { Metadata } from "next";
-import { Space_Grotesk, Playfair_Display } from "next/font/google";
+import { Space_Grotesk, Playfair_Display, Bangers } from "next/font/google"; // Added Bangers
 import { Analytics } from "@vercel/analytics/next";
 import { NavHeaderClient } from "@/components/nav-header-client";
 import { AuthProvider } from "@/components/auth-provider";
@@ -18,6 +18,12 @@ const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-display",
   weight: ["400", "500", "600", "700", "800", "900"],
+});
+
+const bangers = Bangers({
+  subsets: ["latin"],
+  variable: "--font-manga",
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -50,8 +56,8 @@ export default function RootLayout({
             __html: `
               (function() {
                 try {
-                  var theme = localStorage.getItem('praxis-theme');
-                  if (theme === 'cyberpunk' || theme === 'manga') {
+                  var theme = localStorage.getItem('praxis-theme-v2');
+                  if (theme) {
                     document.documentElement.setAttribute('data-theme', theme);
                   }
                 } catch (e) {}
@@ -61,9 +67,15 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${spaceGrotesk.variable} ${playfairDisplay.variable} font-sans antialiased text-foreground selection:bg-primary selection:text-primary-foreground`}
+        className={`${spaceGrotesk.variable} ${playfairDisplay.variable} ${bangers.variable} font-sans antialiased text-foreground selection:bg-primary selection:text-primary-foreground`}
         style={{ height: "auto", minHeight: "100%" }}
       >
+        {/* Background Layers for smooth transitioning */}
+        <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden">
+          <div id="bg-layer-manga" className="absolute inset-0 transition-opacity duration-500 ease-in-out opacity-0" />
+          <div id="bg-layer-cyber" className="absolute inset-0 transition-opacity duration-500 ease-in-out opacity-0" />
+        </div>
+
         <div className="min-h-screen flex flex-col relative overflow-x-hidden">
           <ThemeProvider>
             <AuthProvider>
