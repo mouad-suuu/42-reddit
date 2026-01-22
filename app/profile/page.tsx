@@ -10,6 +10,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
+import { CountUp } from "@/components/ui/count-up";
 
 interface UserProfile {
   user: {
@@ -272,28 +273,48 @@ export default function ProfilePage() {
           {/* Stats */}
           <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4 md:ml-auto">
             {cursus && (
-              <div
-                className={`text-center p-4 ${isCyberpunk
-                  ? "bg-[var(--cyber-dark)] border border-[var(--cyber-border)]"
-                  : "bg-secondary border-2 border-border"
-                  }`}
-              >
+              <div className="col-span-2 grid grid-cols-2 gap-4">
                 <div
-                  className={`text-2xl font-display font-black ${isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-foreground"
+                  className={`text-center p-2 animate-in-up delay-100 ${isCyberpunk
+                    ? "bg-[var(--cyber-dark)] border border-[var(--cyber-border)]"
+                    : "bg-secondary border-2 border-border"
                     }`}
                 >
-                  {cursus.level.toFixed(2)}
+                  <div
+                    className={`text-2xl font-display font-black ${isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-foreground"
+                      }`}
+                  >
+                    <CountUp end={cursus.level} decimals={2} duration={2000} />
+                  </div>
+                  <div
+                    className={`text-xs uppercase font-bold ${isCyberpunk ? "text-gray-500" : "text-muted-foreground"
+                      }`}
+                  >
+                    Level
+                  </div>
                 </div>
-                <div
-                  className={`text-xs uppercase font-bold ${isCyberpunk ? "text-gray-500" : "text-muted-foreground"
-                    }`}
-                >
-                  Level
-                </div>
+
+                {cursus.blackholedAt && (
+                  <div
+                    className={`text-center p-2 animate-in-up delay-200 ${isCyberpunk
+                      ? "bg-red-500/10 border border-red-500/50"
+                      : "bg-red-50 border-2 border-red-200"
+                      }`}
+                  >
+                    <div className={`text-sm font-mono font-bold mt-1 ${isCyberpunk ? "text-red-400" : "text-red-700"}`}>
+                      <span className="block text-xs uppercase opacity-70 mb-1 text-foreground">Black Hole</span>
+                      {new Date(cursus.blackholedAt).toLocaleDateString("en-FR", {
+                        day: "numeric",
+                        month: "short",
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
+
             <div
-              className={`text-center p-4 ${isCyberpunk
+              className={`text-center p-2 animate-in-up delay-300 ${isCyberpunk
                 ? "bg-[var(--cyber-dark)] border border-[var(--cyber-border)]"
                 : "bg-secondary border-2 border-border"
                 }`}
@@ -302,7 +323,7 @@ export default function ProfilePage() {
                 className={`text-2xl font-display font-black ${isCyberpunk ? "text-[var(--cyber-green)]" : "text-foreground"
                   }`}
               >
-                {user.correctionPoints}
+                <CountUp end={user.correctionPoints} duration={2500} />
               </div>
               <div
                 className={`text-xs uppercase font-bold ${isCyberpunk ? "text-gray-500" : "text-muted-foreground"
@@ -312,7 +333,7 @@ export default function ProfilePage() {
               </div>
             </div>
             <div
-              className={`text-center p-4 ${isCyberpunk
+              className={`text-center p-2 animate-in-up delay-300 ${isCyberpunk
                 ? "bg-[var(--cyber-dark)] border border-[var(--cyber-border)]"
                 : "bg-secondary border-2 border-border"
                 }`}
@@ -321,7 +342,7 @@ export default function ProfilePage() {
                 className={`text-2xl font-display font-black ${isCyberpunk ? "text-[var(--cyber-purple)]" : "text-foreground"
                   }`}
               >
-                {user.wallet}
+                <CountUp end={user.wallet} duration={2500} />
               </div>
               <div
                 className={`text-xs uppercase font-bold ${isCyberpunk ? "text-gray-500" : "text-muted-foreground"
@@ -332,7 +353,7 @@ export default function ProfilePage() {
             </div>
             {user.location && (
               <div
-                className={`text-center p-4 ${isCyberpunk
+                className={`text-center p-2 animate-in-up delay-300 ${isCyberpunk
                   ? "bg-[var(--cyber-dark)] border border-[var(--cyber-cyan)]/50"
                   : "bg-green-50 border-2 border-green-200"
                   }`}
@@ -353,27 +374,6 @@ export default function ProfilePage() {
             )}
           </div>
         </div>
-
-        {/* Blackhole warning */}
-        {cursus?.blackholedAt && (
-          <div
-            className={`mt-6 p-4 ${isCyberpunk
-              ? "bg-red-500/10 border border-red-500/50"
-              : "bg-red-50 border-2 border-red-200"
-              }`}
-          >
-            <p className={`font-mono text-sm ${isCyberpunk ? "text-red-400" : "text-red-700"}`}>
-              Black Hole:{" "}
-              <span className="font-bold">
-                {new Date(cursus.blackholedAt).toLocaleDateString("en-FR", {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                })}
-              </span>
-            </p>
-          </div>
-        )}
       </div>
 
       {/* In Progress Projects */}

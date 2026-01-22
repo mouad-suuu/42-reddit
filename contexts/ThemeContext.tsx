@@ -19,7 +19,7 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 const STORAGE_KEY = "praxis-theme-v2"; // Changed to force reset to default
-const DEFAULT_THEME: Theme = "manga";
+const DEFAULT_THEME: Theme = "cyberpunk";
 
 /**
  * Provides theme state and toggle functionality to the app.
