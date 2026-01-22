@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
-import { Loader2, Copy } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 interface UserProfile {
   user: {
@@ -236,7 +236,7 @@ export default function ProfilePage() {
     <div className="container mx-auto px-6 py-10">
       {/* Profile Header */}
       <div
-        className={`p-4 mb-8 ${
+        className={`p-8 mb-8 ${
           isCyberpunk
             ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)]"
             : "bg-card border-2 border-border manga-shadow"
@@ -264,27 +264,7 @@ export default function ProfilePage() {
                   isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-muted-foreground"
                 }`}
               >
-                {" " + user.login + " "}
-        {cursus?.blackholedAt && (
-          <div
-          className={`inline-block mt-3 p-1 ${
-              isCyberpunk
-                ? "bg-red-500/10 border border-red-500/50"
-                : "bg-red-50 border-2 border-red-200"
-            }`}
-          >
-            <p className={`font-mono text-sm ${isCyberpunk ? "text-red-400" : "text-red-700"}`}>
-               Black Hole:{" "}
-              <span className="font-bold">
-                {new Date(cursus.blackholedAt).toLocaleDateString("en-FR", {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                })}
-              </span>
-            </p>
-          </div>
-        )}
+                @{user.login}
               </p>
               {user.campus && (
                 <p
@@ -396,6 +376,26 @@ export default function ProfilePage() {
         </div>
 
         {/* Blackhole warning */}
+        {cursus?.blackholedAt && (
+          <div
+            className={`mt-6 p-4 ${
+              isCyberpunk
+                ? "bg-red-500/10 border border-red-500/50"
+                : "bg-red-50 border-2 border-red-200"
+            }`}
+          >
+            <p className={`font-mono text-sm ${isCyberpunk ? "text-red-400" : "text-red-700"}`}>
+               Black Hole:{" "}
+              <span className="font-bold">
+                {new Date(cursus.blackholedAt).toLocaleDateString("en-FR", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })}
+              </span>
+            </p>
+          </div>
+        )}
       </div>
 
       {/* In Progress Projects */}
