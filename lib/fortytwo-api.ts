@@ -257,6 +257,8 @@ export async function getProjectSessions(
 /**
  * Fetches users who completed a project.
  * Can filter by campus for location-based filtering.
+ * Returns users sorted by most recent completion (latest first).
+ * Note: validated filter is applied client-side as the API doesn't support it directly.
  */
 export async function getProjectUsers(
   projectId: number,
@@ -271,20 +273,28 @@ export async function getProjectUsers(
 
   let endpoint = `/v2/projects/${projectId}/projects_users?page[number]=${page}&page[size]=${perPage}`;
 
-  // Filter by validation status
-  if (validated) {
-    endpoint += "&filter[validated]=true";
-  }
+  // Filter by finished status - only users who actually finished the project
+  endpoint += "&filter[status]=finished";
+
+  // Filter by marked (has a mark) - ensures they completed it
+  endpoint += "&filter[marked]=true";
 
   // Filter by campus if provided
   if (campusId) {
     endpoint += `&filter[campus]=${campusId}`;
   }
 
-  // Sort by most recent completion
+  // Sort by most recent completion (latest first) - marked_at is when they got their final mark
   endpoint += "&sort=-marked_at";
 
-  return apiRequest<FortyTwoProjectUser[]>(endpoint);
+  const users = await apiRequest<FortyTwoProjectUser[]>(endpoint);
+
+  // Filter by validated status client-side if requested
+  if (validated) {
+    return users.filter((pu) => pu.validated === true || (pu.final_mark !== null && pu.final_mark >= 100));
+  }
+
+  return users;
 }
 
 /**

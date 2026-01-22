@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { getProjectBySlug, getProject, getProjectUsers } from "@/lib/fortytwo-api";
+import { getProjectBySlug, getProjectUsers, getCampuses } from "@/lib/fortytwo-api";
+import { getAuthUser } from "@/lib/auth";
 
 /**
  * GET /api/42/projects/[slug]/users
@@ -8,7 +9,7 @@ import { getProjectBySlug, getProject, getProjectUsers } from "@/lib/fortytwo-ap
  * Query params:
  * - page: page number (default: 1)
  * - per_page: items per page (default: 30, max: 100)
- * - campus: campus ID to filter by
+ * - campus: campus name or ID to filter by (if not provided, uses current user's campus)
  * - validated: whether to only show validated (default: true)
  */
 export async function GET(
@@ -24,10 +25,35 @@ export async function GET(
       parseInt(searchParams.get("per_page") || "30", 10),
       100
     );
-    const campusId = searchParams.get("campus")
-      ? parseInt(searchParams.get("campus")!, 10)
-      : undefined;
     const validated = searchParams.get("validated") !== "false";
+
+    // Get campus filter
+    let campusId: number | undefined;
+    const campusParam = searchParams.get("campus");
+    
+    if (campusParam) {
+      // If it's numeric, treat as ID
+      if (/^\d+$/.test(campusParam)) {
+        campusId = parseInt(campusParam, 10);
+      } else {
+        // Otherwise, look up by name
+        const campuses = await getCampuses();
+        const campus = campuses.find((c) => c.name === campusParam);
+        if (campus) {
+          campusId = campus.id;
+        }
+      }
+    } else {
+      // If no campus specified, try to use current user's campus
+      const authUser = await getAuthUser();
+      if (authUser?.user?.campus) {
+        const campuses = await getCampuses();
+        const campus = campuses.find((c) => c.name === authUser.user!.campus);
+        if (campus) {
+          campusId = campus.id;
+        }
+      }
+    }
 
     // Check if slug is numeric (project ID)
     const isNumeric = /^\d+$/.test(slug);
@@ -49,39 +75,69 @@ export async function GET(
     }
 
     // Fetch users who completed the project
-    const users = await getProjectUsers(projectId, {
-      page,
-      perPage,
-      campusId,
-      validated,
-    });
-
-    return NextResponse.json({
-      users: users.map((pu) => ({
-        id: pu.id,
-        login: pu.user.login,
-        displayName: pu.user.usual_full_name || `${pu.user.first_name} ${pu.user.last_name}`,
-        avatarUrl: pu.user.image?.link || null,
-        finalMark: pu.final_mark,
-        validated: pu.validated ?? (pu.final_mark !== null && pu.final_mark >= 100),
-        markedAt: pu.marked_at,
-        campus: pu.user.campus?.[0] || null,
-        level: pu.user.cursus_users?.find((cu) => cu.cursus_id === 21)?.level || null,
-      })),
-      pagination: {
+    try {
+      const users = await getProjectUsers(projectId, {
         page,
-        per_page: perPage,
-        total: users.length,
-      },
-    });
+        perPage,
+        campusId,
+        validated,
+      });
+
+      return NextResponse.json({
+        users: users.map((pu) => ({
+          id: pu.id,
+          login: pu.user.login,
+          displayName: pu.user.usual_full_name || `${pu.user.first_name} ${pu.user.last_name}`,
+          avatarUrl: pu.user.image?.link || null,
+          finalMark: pu.final_mark,
+          validated: pu.validated ?? (pu.final_mark !== null && pu.final_mark >= 100),
+          markedAt: pu.marked_at,
+          campus: pu.user.campus?.[0] || null,
+          level: pu.user.cursus_users?.find((cu) => cu.cursus_id === 21)?.level || null,
+        })),
+        pagination: {
+          page,
+          per_page: perPage,
+          total: users.length,
+        },
+      });
+    } catch (error) {
+      // Handle rate limiting gracefully
+      if (error instanceof Error && error.message.includes("429")) {
+        console.warn("42 API rate limit exceeded, returning empty list");
+        return NextResponse.json({
+          users: [],
+          pagination: {
+            page,
+            per_page: perPage,
+            total: 0,
+          },
+          rateLimited: true,
+        });
+      }
+      // For other errors, also return empty array gracefully
+      console.error("Failed to fetch project users:", error);
+      return NextResponse.json({
+        users: [],
+        pagination: {
+          page,
+          per_page: perPage,
+          total: 0,
+        },
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
   } catch (error) {
-    console.error("Failed to fetch project users:", error);
-    return NextResponse.json(
-      {
-        error: "Failed to fetch project users from 42 API",
-        details: error instanceof Error ? error.message : "Unknown error",
+    // Outer catch for any unexpected errors
+    console.error("Unexpected error in project users route:", error);
+    return NextResponse.json({
+      users: [],
+      pagination: {
+        page: 1,
+        per_page: 20,
+        total: 0,
       },
-      { status: 500 }
-    );
+      error: "Unexpected error occurred",
+    });
   }
 }

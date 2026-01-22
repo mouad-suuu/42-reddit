@@ -12,7 +12,8 @@ import { Comment, CommentData } from "@/components/comment";
 import { ReadmePreviewCard, ReadmePreviewData } from "@/components/readme-preview-card";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { MessageSquare, FileText, Send, Loader2, Plus } from "lucide-react";
+import { MessageSquare, FileText, Send, Loader2, Plus, Users, CheckCircle2 } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 type ProjectCategory = "NEW_CORE" | "OLD_CORE" | "PISCINE" | "OTHER";
 
@@ -59,6 +60,15 @@ export default function ProjectDetailPage() {
   // READMEs state
   const [readmes, setReadmes] = useState<ReadmePreviewData[]>([]);
   const [readmesLoading, setReadmesLoading] = useState(false);
+
+  // Project users state
+  const [projectUsers, setProjectUsers] = useState<any[]>([]);
+  const [projectUsersLoading, setProjectUsersLoading] = useState(false);
+  const [projectUsersPage, setProjectUsersPage] = useState(1);
+  const [hasMoreUsers, setHasMoreUsers] = useState(true);
+  const [loadingMoreUsers, setLoadingMoreUsers] = useState(false);
+  const [rateLimited, setRateLimited] = useState(false);
+  const { user } = useAuth();
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -143,6 +153,75 @@ export default function ProjectDetailPage() {
       }
     }
   }, [project, activeView, fetchComments, fetchReadmes]);
+
+  // Fetch project users from user's campus
+  const fetchProjectUsers = useCallback(async (page: number = 1, append: boolean = false) => {
+    if (!project?.fortyTwoProjectId || !user?.profile?.campus) return;
+    
+    if (append) {
+      setLoadingMoreUsers(true);
+    } else {
+      setProjectUsersLoading(true);
+    }
+    
+    try {
+      const response = await fetch(
+        `/api/42/projects/${project.slug}/users?page=${page}&per_page=20&campus=${encodeURIComponent(user.profile.campus)}`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        const newUsers = data.users || [];
+        
+        if (append) {
+          setProjectUsers((prev) => [...prev, ...newUsers]);
+        } else {
+          setProjectUsers(newUsers);
+        }
+        
+        // Check if rate limited
+        if (data.rateLimited) {
+          setRateLimited(true);
+          setHasMoreUsers(false);
+        } else {
+          setRateLimited(false);
+          // Check if there are more users to load
+          setHasMoreUsers(newUsers.length === 20); // If we got 20, there might be more
+        }
+        
+        setProjectUsersPage(page);
+      } else {
+        // On any error, return empty array gracefully
+        if (append) {
+          // Don't clear existing users if loading more fails
+          setHasMoreUsers(false);
+        } else {
+          setProjectUsers([]);
+          setRateLimited(true); // Assume rate limited on error
+        }
+      }
+    } catch (err) {
+      console.error("Failed to fetch project users:", err);
+      setHasMoreUsers(false);
+    } finally {
+      if (append) {
+        setLoadingMoreUsers(false);
+      } else {
+        setProjectUsersLoading(false);
+      }
+    }
+  }, [project, user]);
+
+  useEffect(() => {
+    if (project && user?.profile?.campus) {
+      fetchProjectUsers(1, false);
+    }
+  }, [project, user, fetchProjectUsers]);
+
+  const handleLoadMoreUsers = () => {
+    if (!loadingMoreUsers && hasMoreUsers) {
+      fetchProjectUsers(projectUsersPage + 1, true);
+    }
+  };
 
   // Post new comment
   const handlePostComment = async () => {
@@ -538,40 +617,113 @@ export default function ProjectDetailPage() {
             </Card>
           )}
 
-
-
-          {/* Stats */}
-          <Card
-            className={cn(
-              "p-4",
-              isCyberpunk
-                ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)]"
-                : "border-2 border-border manga-shadow"
-            )}
-          >
-            <h3
+          {/* Completed Users from Campus */}
+          {project.fortyTwoProjectId && (
+            <Card
               className={cn(
-                "text-sm font-display font-bold uppercase mb-3",
-                isCyberpunk ? "text-white" : "text-foreground"
+                "p-4",
+                isCyberpunk
+                  ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)]"
+                  : "border-2 border-border manga-shadow"
               )}
             >
-              Stats
-            </h3>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className={isCyberpunk ? "text-gray-400" : "text-muted-foreground"}>Comments</span>
-                <span className={cn("font-bold", isCyberpunk ? "text-[var(--cyber-purple)]" : "text-foreground")}>
-                  {project._count.comments}
-                </span>
+              <div className="flex items-center gap-2 mb-3">
+                <Users className={cn("h-4 w-4", isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-primary")} />
+                <h3
+                  className={cn(
+                    "text-sm font-display font-bold uppercase",
+                    isCyberpunk ? "text-white" : "text-foreground"
+                  )}
+                >
+                  Completed ({projectUsers.length})
+                </h3>
               </div>
-              <div className="flex justify-between">
-                <span className={isCyberpunk ? "text-gray-400" : "text-muted-foreground"}>READMEs</span>
-                <span className={cn("font-bold", isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-foreground")}>
-                  {project._count.posts}
-                </span>
-              </div>
-            </div>
-          </Card>
+              {projectUsersLoading ? (
+                <div className="text-center py-4">
+                  <Loader2 className={cn("h-5 w-5 animate-spin mx-auto", isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-muted-foreground")} />
+                </div>
+              ) : projectUsers.length === 0 ? (
+                <div className="text-center py-4">
+                  {rateLimited ? (
+                    <p className={cn("text-xs", isCyberpunk ? "text-orange-400" : "text-orange-600")}>
+                      ⚠️ Rate limited by 42 API. Please try again in a moment.
+                    </p>
+                  ) : (
+                    <p className={cn("text-xs", isCyberpunk ? "text-gray-500" : "text-muted-foreground")}>
+                      {user?.profile?.campus
+                        ? `No one from ${user.profile.campus} has completed this project yet.`
+                        : "No completed users found."}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-2 max-h-[400px] overflow-y-auto">
+                    {projectUsers.map((projectUser) => (
+                      <Link
+                        key={projectUser.id}
+                        href={`/profile/${projectUser.login}`}
+                        className={cn(
+                          "flex items-center gap-2 p-2 rounded hover:bg-muted transition-colors",
+                          isCyberpunk && "hover:bg-[var(--cyber-dark)]"
+                        )}
+                      >
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage
+                            src={projectUser.avatarUrl || undefined}
+                            alt={projectUser.login}
+                          />
+                          <AvatarFallback className="text-xs">
+                            {projectUser.login.slice(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1">
+                            <p className={cn("text-sm font-medium truncate", isCyberpunk ? "text-white" : "text-foreground")}>
+                              {projectUser.displayName || projectUser.login}
+                            </p>
+                            {projectUser.validated && (
+                              <CheckCircle2 className={cn("h-3 w-3 shrink-0", isCyberpunk ? "text-green-400" : "text-green-600")} />
+                            )}
+                          </div>
+                          {projectUser.finalMark !== null && (
+                            <p className={cn("text-xs", isCyberpunk ? "text-gray-500" : "text-muted-foreground")}>
+                              {projectUser.finalMark}%
+                              {projectUser.level && ` • Level ${projectUser.level.toFixed(2)}`}
+                            </p>
+                          )}
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                  {hasMoreUsers && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleLoadMoreUsers}
+                      disabled={loadingMoreUsers}
+                      className={cn(
+                        "w-full mt-3",
+                        isCyberpunk && "border-[var(--cyber-border)] hover:border-[var(--cyber-cyan)]"
+                      )}
+                    >
+                      {loadingMoreUsers ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Loading...
+                        </>
+                      ) : (
+                        <>
+                          <Plus className="h-4 w-4 mr-2" />
+                          Load More
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </>
+              )}
+            </Card>
+          )}
         </div>
       </div>
     </div>
