@@ -99,7 +99,7 @@ export async function PATCH(
       },
     });
 
-    const score = updatedPost.votes.reduce((sum, vote) => sum + vote.value, 0);
+    const score = updatedPost.votes.reduce((sum: number, vote) => sum + vote.value, 0);
 
     return NextResponse.json({
       post: {
