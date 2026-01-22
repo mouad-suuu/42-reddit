@@ -1,23 +1,33 @@
-/**
- * 42 API client using Client Credentials flow for server-side requests.
- * Used for fetching public data like projects, users who completed projects, etc.
- */
+import redis from "./redis";
 
 interface TokenCache {
   accessToken: string;
   expiresAt: number;
 }
 
-let tokenCache: TokenCache | null = null;
+// In-memory fallback
+let localTokenCache: TokenCache | null = null;
 
 /**
  * Gets a valid access token using client credentials flow.
- * Caches the token until it expires.
+ * Caches the token in Redis (or memory fallback) until it expires.
  */
 async function getAccessToken(): Promise<string> {
-  // Check if we have a valid cached token
-  if (tokenCache && tokenCache.expiresAt > Date.now() + 60000) {
-    return tokenCache.accessToken;
+  const cacheKey = "42api:token";
+
+  // 1. Try Redis first
+  try {
+    const cachedToken = await redis.get(cacheKey);
+    if (cachedToken) {
+      return cachedToken;
+    }
+  } catch (err) {
+    console.warn("Redis error in getAccessToken:", err);
+  }
+
+  // 2. Try in-memory fallback
+  if (localTokenCache && localTokenCache.expiresAt > Date.now() + 60000) {
+    return localTokenCache.accessToken;
   }
 
   const clientId = process.env.FORTYTWO_CLIENT_ID;
@@ -45,10 +55,22 @@ async function getAccessToken(): Promise<string> {
 
   const data = await response.json();
 
-  // Cache the token (expires_in is in seconds)
-  tokenCache = {
+  // Expiration buffer (e.g. 60 seconds)
+  const ttl = Math.max(0, data.expires_in - 60);
+
+  // Store in Redis
+  try {
+    if (ttl > 0) {
+      await redis.set(cacheKey, data.access_token, "EX", ttl);
+    }
+  } catch (err) {
+    console.warn("Retrying Redis set in getAccessToken:", err);
+  }
+
+  // Store in local cache
+  localTokenCache = {
     accessToken: data.access_token,
-    expiresAt: Date.now() + data.expires_in * 1000,
+    expiresAt: Date.now() + ttl * 1000,
   };
 
   return data.access_token;
@@ -56,11 +78,33 @@ async function getAccessToken(): Promise<string> {
 
 /**
  * Makes an authenticated request to the 42 API.
+ * Caches GET requests using Redis.
  */
 async function apiRequest<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
+  // Only cache GET requests
+  const method = options.method || "GET";
+  const isGet = method.toUpperCase() === "GET";
+  const cacheKey = `42api:cache:${endpoint}`;
+
+  // Default cache TTL: 5 minutes for most things, configurable?
+  // We'll stick to 5m (300s) for now as a safe default.
+  // Special handling for high-change data could be added here.
+  const ttl = 300;
+
+  if (isGet) {
+    try {
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        return JSON.parse(cached) as T;
+      }
+    } catch (err) {
+      console.warn("Redis error in apiRequest read:", err);
+    }
+  }
+
   const token = await getAccessToken();
 
   const response = await fetch(`https://api.intra.42.fr${endpoint}`, {
@@ -77,7 +121,17 @@ async function apiRequest<T>(
     throw new Error(`42 API request failed: ${response.status}`);
   }
 
-  return response.json();
+  const data = await response.json();
+
+  if (isGet) {
+    try {
+      await redis.set(cacheKey, JSON.stringify(data), "EX", ttl);
+    } catch (err) {
+      console.warn("Redis error in apiRequest write:", err);
+    }
+  }
+
+  return data as T;
 }
 
 // ============= TYPE DEFINITIONS =============
@@ -298,24 +352,16 @@ export async function getProjectUsers(
   return users;
 }
 
-// Cache for campuses to avoid rate limits
-let campusesCache: { id: number; name: string; country: string }[] | null = null;
-
 /**
  * Fetches all campuses.
  */
 export async function getCampuses(): Promise<
   { id: number; name: string; country: string }[]
 > {
-  if (campusesCache) {
-    return campusesCache;
-  }
-
   const campuses = await apiRequest<{ id: number; name: string; country: string }[]>(
     `/v2/campus?page[size]=100&sort=name`
   );
 
-  campusesCache = campuses;
   return campuses;
 }
 
