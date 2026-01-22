@@ -26,11 +26,18 @@ export async function GET(
       100
     );
     const validated = searchParams.get("validated") !== "false";
+    const sort = searchParams.get("sort") || "-updated_at";
+    const online = searchParams.get("online") === "true";
+
+    // If filtering by online status, fetch max allowed pages to increase hit rate
+    const effectivePerPage = online ? 100 : perPage;
+
+    console.log(`[API] Fetching users for slug ${slug}, sort: ${sort}, online: ${online}`);
 
     // Get campus filter
     let campusId: number | undefined;
     const campusParam = searchParams.get("campus");
-    
+
     if (campusParam) {
       // If it's numeric, treat as ID
       if (/^\d+$/.test(campusParam)) {
@@ -78,13 +85,28 @@ export async function GET(
     try {
       const users = await getProjectUsers(projectId, {
         page,
-        perPage,
+        perPage: effectivePerPage,
         campusId,
         validated,
+        sort,
       });
 
+      // If filtering by online, remove users without location
+      // Logs for debugging
+      if (online) {
+        console.log(`[API] Filtering online users. Total fetched: ${users.length}`);
+      }
+
+      const filteredUsers = online
+        ? users.filter(u => u.user.location !== null && u.user.location !== "")
+        : users;
+
+      if (online) {
+        console.log(`[API] Users with location: ${filteredUsers.length}`);
+      }
+
       return NextResponse.json({
-        users: users.map((pu) => ({
+        users: filteredUsers.map((pu) => ({
           id: pu.id,
           login: pu.user.login,
           displayName: pu.user.usual_full_name || `${pu.user.first_name} ${pu.user.last_name}`,
@@ -93,12 +115,13 @@ export async function GET(
           validated: pu.validated ?? (pu.final_mark !== null && pu.final_mark >= 100),
           markedAt: pu.marked_at,
           campus: pu.user.campus?.[0] || null,
+          location: pu.user.location || null,
           level: pu.user.cursus_users?.find((cu) => cu.cursus_id === 21)?.level || null,
         })),
         pagination: {
           page,
           per_page: perPage,
-          total: users.length,
+          total: filteredUsers.length,
         },
       });
     } catch (error) {

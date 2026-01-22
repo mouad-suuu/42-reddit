@@ -267,9 +267,10 @@ export async function getProjectUsers(
     perPage?: number;
     campusId?: number;
     validated?: boolean;
+    sort?: string;
   } = {}
 ): Promise<FortyTwoProjectUser[]> {
-  const { page = 1, perPage = 30, campusId, validated = true } = options;
+  const { page = 1, perPage = 30, campusId, validated = true, sort = "-updated_at" } = options;
 
   let endpoint = `/v2/projects/${projectId}/projects_users?page[number]=${page}&page[size]=${perPage}`;
 
@@ -284,8 +285,8 @@ export async function getProjectUsers(
     endpoint += `&filter[campus]=${campusId}`;
   }
 
-  // Sort by most recent completion (latest first) - marked_at is when they got their final mark
-  endpoint += "&sort=-marked_at";
+  // Sort parameter
+  endpoint += `&sort=${sort}`;
 
   const users = await apiRequest<FortyTwoProjectUser[]>(endpoint);
 
@@ -297,13 +298,25 @@ export async function getProjectUsers(
   return users;
 }
 
+// Cache for campuses to avoid rate limits
+let campusesCache: { id: number; name: string; country: string }[] | null = null;
+
 /**
  * Fetches all campuses.
  */
 export async function getCampuses(): Promise<
   { id: number; name: string; country: string }[]
 > {
-  return apiRequest(`/v2/campus?page[size]=100&sort=name`);
+  if (campusesCache) {
+    return campusesCache;
+  }
+
+  const campuses = await apiRequest<{ id: number; name: string; country: string }[]>(
+    `/v2/campus?page[size]=100&sort=name`
+  );
+
+  campusesCache = campuses;
+  return campuses;
 }
 
 /**
@@ -410,11 +423,11 @@ export async function getFullUserByLogin(login: string): Promise<FortyTwoUserFul
     const users = await apiRequest<{ id: number; login: string }[]>(
       `/v2/users?filter[login]=${encodeURIComponent(login)}`
     );
-    
+
     if (!users[0]) {
       return null;
     }
-    
+
     // Fetch full user data by ID (this includes nested cursus_users, projects_users, etc.)
     return await getFullUserById(users[0].id);
   } catch {

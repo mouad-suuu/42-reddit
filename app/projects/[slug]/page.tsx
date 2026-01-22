@@ -14,6 +14,9 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { MessageSquare, FileText, Send, Loader2, Plus, Users, CheckCircle2, Edit } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Switch } from "@/components/ui/switch";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 type ProjectCategory = "NEW_CORE" | "OLD_CORE" | "PISCINE" | "OTHER";
 
@@ -37,6 +40,8 @@ type ViewType = "comments" | "readmes";
  * Project detail page with Comments and READMEs views.
  * Posting controls are in the sidebar.
  */
+const SUPPORTED_CAMPUSES = ["Khouribga", "Rabat", "Bengrir", "Tetouan"];
+
 export default function ProjectDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -68,6 +73,8 @@ export default function ProjectDetailPage() {
   const [hasMoreUsers, setHasMoreUsers] = useState(true);
   const [loadingMoreUsers, setLoadingMoreUsers] = useState(false);
   const [rateLimited, setRateLimited] = useState(false);
+  const [showOnlineOnly, setShowOnlineOnly] = useState(true);
+  const [campusFilter, setCampusFilter] = useState<string>("");
   const { user } = useAuth();
 
   // Redirect if not authenticated
@@ -78,37 +85,47 @@ export default function ProjectDetailPage() {
   }, [authLoading, authenticated, router]);
 
   // Fetch project data
-  useEffect(() => {
-    async function fetchProject() {
-      try {
-        setLoading(true);
-        setError(null);
+  // Fetch project data
+  const fetchProject = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        const response = await fetch(`/api/projects/${encodeURIComponent(slug)}`);
+      const response = await fetch(`/api/projects/${encodeURIComponent(slug)}`);
 
-        if (!response.ok) {
-          if (response.status === 404) {
-            setError("Project not found");
-          } else {
-            throw new Error("Failed to fetch project");
-          }
-          return;
+      if (!response.ok) {
+        if (response.status === 404) {
+          setError("Project not found");
+        } else {
+          throw new Error("Failed to fetch project");
         }
-
-        const data = await response.json();
-        setProject(data.project);
-      } catch (err) {
-        console.error("Error fetching project:", err);
-        setError(err instanceof Error ? err.message : "Failed to load project");
-      } finally {
-        setLoading(false);
+        return;
       }
-    }
 
+      const data = await response.json();
+      setProject(data.project);
+    } catch (err) {
+      console.error("Error fetching project:", err);
+      setError(err instanceof Error ? err.message : "Failed to load project");
+    } finally {
+      setLoading(false);
+    }
+  }, [slug]);
+
+  useEffect(() => {
     if (slug) {
       fetchProject();
     }
   }, [slug]);
+
+  // Set default campus filter
+  useEffect(() => {
+    if (user?.profile?.campus && !campusFilter) {
+      if (SUPPORTED_CAMPUSES.includes(user.profile.campus)) {
+        setCampusFilter(user.profile.campus);
+      }
+    }
+  }, [user, campusFilter]);
 
   // Fetch comments
   const fetchComments = useCallback(async () => {
@@ -156,7 +173,18 @@ export default function ProjectDetailPage() {
 
   // Fetch project users from user's campus
   const fetchProjectUsers = useCallback(async (page: number = 1, append: boolean = false) => {
-    if (!project?.fortyTwoProjectId || !user?.profile?.campus) return;
+    if (!project?.fortyTwoProjectId) return;
+
+    // Determine campus to filter by
+    // "all" = no filter
+    // empty = use user's campus (default)
+    // string = specific campus
+    let currentCampus = campusFilter;
+    if (campusFilter === "all") {
+      currentCampus = ""; // Pass empty to bypass "if (currentCampus)" check below, effectively "all"
+    } else if (!campusFilter) {
+      currentCampus = user?.profile?.campus || "";
+    }
 
     if (append) {
       setLoadingMoreUsers(true);
@@ -164,10 +192,19 @@ export default function ProjectDetailPage() {
       setProjectUsersLoading(true);
     }
 
+    // Default sort by updated_at (most recent completion)
+    const sort = "-updated_at";
+
     try {
-      const response = await fetch(
-        `/api/42/projects/${project.slug}/users?page=${page}&per_page=20&campus=${encodeURIComponent(user.profile.campus)}`
-      );
+      let url = `/api/42/projects/${project.slug}/users?page=${page}&per_page=20&sort=${sort}`;
+      if (currentCampus) {
+        url += `&campus=${encodeURIComponent(currentCampus)}`;
+      }
+      if (showOnlineOnly) {
+        url += "&online=true";
+      }
+
+      const response = await fetch(url);
       if (response.ok) {
         const data = await response.json();
         const newUsers = data.users || [];
@@ -185,7 +222,13 @@ export default function ProjectDetailPage() {
         } else {
           setRateLimited(false);
           // Check if there are more users to load
-          setHasMoreUsers(newUsers.length === 20); // If we got 20, there might be more
+          if (showOnlineOnly) {
+            // In online mode, we fetch 100 items. If we found anyone, assume there might be more on next page.
+            // If 0 found, assume we exhausted recent active users.
+            setHasMoreUsers(newUsers.length > 0);
+          } else {
+            setHasMoreUsers(newUsers.length === 20);
+          }
         }
 
         setProjectUsersPage(page);
@@ -209,13 +252,13 @@ export default function ProjectDetailPage() {
         setProjectUsersLoading(false);
       }
     }
-  }, [project, user]);
+  }, [project, user, campusFilter, showOnlineOnly]);
 
   useEffect(() => {
-    if (project && user?.profile?.campus) {
+    if (project) {
       fetchProjectUsers(1, false);
     }
-  }, [project, user, fetchProjectUsers]);
+  }, [project, user, campusFilter, showOnlineOnly, fetchProjectUsers]);
 
   const handleLoadMoreUsers = () => {
     if (!loadingMoreUsers && hasMoreUsers) {
@@ -640,16 +683,51 @@ export default function ProjectDetailPage() {
                   : "border-2 border-border manga-shadow"
               )}
             >
-              <div className="flex items-center gap-2 mb-3">
-                <Users className={cn("h-4 w-4", isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-primary")} />
-                <h3
-                  className={cn(
-                    "text-sm font-display font-bold uppercase",
-                    isCyberpunk ? "text-white" : "text-foreground"
-                  )}
-                >
-                  Completed ({projectUsers.length})
-                </h3>
+              <div className="flex flex-col gap-3 mb-4">
+                <div className="flex items-center gap-2">
+                  <Users className={cn("h-4 w-4", isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-primary")} />
+                  <h3
+                    className={cn(
+                      "text-sm font-display font-bold uppercase",
+                      isCyberpunk ? "text-white" : "text-foreground"
+                    )}
+                  >
+                    Completed ({projectUsers.length})
+                  </h3>
+                </div>
+
+                {/* Filters */}
+                <div className="space-y-3">
+                  <select
+                    value={campusFilter}
+                    onChange={(e) => setCampusFilter(e.target.value)}
+                    className={cn(
+                      "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+                      "h-8 text-xs",
+                      isCyberpunk
+                        ? "bg-[var(--cyber-panel)] border-[var(--cyber-border)] text-white focus-visible:ring-[var(--cyber-cyan)]"
+                        : "bg-background border-input text-foreground"
+                    )}
+                  >
+
+                    {SUPPORTED_CAMPUSES.map((campusName) => (
+                      <option key={campusName} value={campusName} className="text-black">
+                        {campusName}
+                      </option>
+                    ))}
+                  </select>
+
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="online-mode"
+                      checked={showOnlineOnly}
+                      onCheckedChange={setShowOnlineOnly}
+                    />
+                    <Label htmlFor="online-mode" className="text-xs cursor-pointer">
+                      Only Currently Logged In
+                    </Label>
+                  </div>
+                </div>
               </div>
               {projectUsersLoading ? (
                 <div className="text-center py-4">
@@ -663,8 +741,8 @@ export default function ProjectDetailPage() {
                     </p>
                   ) : (
                     <p className={cn("text-xs", isCyberpunk ? "text-gray-500" : "text-muted-foreground")}>
-                      {user?.profile?.campus
-                        ? `No one from ${user.profile.campus} has completed this project yet.`
+                      {campusFilter
+                        ? `No one from ${campusFilter} has completed this project yet.`
                         : "No completed users found."}
                     </p>
                   )}
