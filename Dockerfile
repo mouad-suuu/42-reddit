@@ -44,6 +44,7 @@ FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
+ENV HOSTNAME="0.0.0.0"
 
 # Copy only the necessary files for the standalone build
 COPY --from=builder /app/public ./public
