@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
+import { Loader2 } from "lucide-react";
 
 interface UserProfile {
   user: {
@@ -69,15 +71,24 @@ interface UserProfile {
 
 /**
  * Profile page showing user's 42 data and in-progress projects.
+ * Requires authentication.
  */
 export default function ProfilePage() {
   const { theme } = useTheme();
   const { authenticated, loading: authLoading } = useAuth();
+  const router = useRouter();
   const isCyberpunk = theme === "cyberpunk";
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!authLoading && !authenticated) {
+      router.push("/");
+    }
+  }, [authLoading, authenticated, router]);
 
   useEffect(() => {
     async function fetchProfile() {
@@ -144,75 +155,38 @@ export default function ProfilePage() {
     },
   };
 
-  // Not logged in
-  if (!authLoading && !authenticated) {
+  // Auth loading state
+  if (authLoading) {
     return (
-      <div className="container mx-auto px-6 py-10">
-        <div
-          className={`text-center py-20 ${
-            isCyberpunk
-              ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)]"
-              : "bg-card border-2 border-border manga-shadow"
+      <div className="min-h-[80vh] flex items-center justify-center">
+        <Loader2
+          className={`h-12 w-12 animate-spin ${
+            isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-primary"
           }`}
-        >
-          <div className="text-6xl mb-6">🔐</div>
-          <h2
-            className={`text-2xl font-display font-bold mb-4 ${
-              isCyberpunk ? "text-white" : "text-foreground"
-            }`}
-          >
-            Login Required
-          </h2>
-          <p
-            className={`mb-8 ${
-              isCyberpunk ? "text-gray-400" : "text-muted-foreground"
-            }`}
-          >
-            Connect with your 42 account to view your profile.
-          </p>
-          <Button
-            asChild
-            size="lg"
-            className={
-              isCyberpunk
-                ? "bg-[var(--cyber-cyan)] text-black hover:bg-[var(--cyber-cyan)]/80"
-                : "manga-shadow"
-            }
-          >
-            <a href="/api/auth/42">Login with 42</a>
-          </Button>
-        </div>
+        />
       </div>
     );
   }
 
-  // Loading
-  if (loading || authLoading) {
+  // Not logged in - will redirect
+  if (!authenticated) {
+    return null;
+  }
+
+  // Loading profile data
+  if (loading) {
     return (
-      <div className="container mx-auto px-6 py-10">
-        <div
-          className={`text-center py-20 ${
-            isCyberpunk
-              ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)]"
-              : "bg-card border-2 border-border manga-shadow"
+      <div className="min-h-[80vh] flex items-center justify-center">
+        <Loader2
+          className={`h-12 w-12 animate-spin ${
+            isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-primary"
           }`}
-        >
-          <div
-            className={`w-12 h-12 border-4 rounded-full animate-spin mx-auto mb-4 ${
-              isCyberpunk
-                ? "border-[var(--cyber-cyan)] border-t-transparent"
-                : "border-foreground border-t-transparent"
-            }`}
-          />
-          <p className={`font-mono ${isCyberpunk ? "text-[var(--cyber-cyan)]" : ""}`}>
-            Loading your profile...
-          </p>
-        </div>
+        />
       </div>
     );
   }
 
-  // Error
+  // Error state
   if (error) {
     return (
       <div className="container mx-auto px-6 py-10">
@@ -223,11 +197,30 @@ export default function ProfilePage() {
               : "bg-card border-2 border-destructive manga-shadow"
           }`}
         >
-          <div className="text-4xl mb-4">⚠️</div>
-          <h3 className={`text-xl font-bold mb-2 ${isCyberpunk ? "text-white" : ""}`}>
+          <div className="text-6xl mb-6">⚠️</div>
+          <h2
+            className={`text-2xl font-display font-bold mb-4 ${
+              isCyberpunk ? "text-white" : "text-foreground"
+            }`}
+          >
+            Error Loading Profile
+          </h2>
+          <p
+            className={`mb-8 ${
+              isCyberpunk ? "text-gray-400" : "text-muted-foreground"
+            }`}
+          >
             {error}
-          </h3>
-          <Button onClick={() => window.location.reload()} className="mt-4">
+          </p>
+          <Button
+            onClick={() => window.location.reload()}
+            size="lg"
+            className={
+              isCyberpunk
+                ? "bg-[var(--cyber-cyan)] text-black hover:bg-[var(--cyber-cyan)]/80"
+                : "manga-shadow"
+            }
+          >
             Try Again
           </Button>
         </div>

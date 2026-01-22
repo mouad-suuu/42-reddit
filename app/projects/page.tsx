@@ -1,12 +1,15 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
+import { Loader2 } from "lucide-react";
 
 type ProjectCategory = "NEW_CORE" | "OLD_CORE" | "PISCINE" | "OTHER";
 
@@ -39,19 +42,32 @@ const circleLabels: Record<number, string> = {
 /**
  * Projects listing page.
  * Shows projects grouped by circle in horizontal rows.
+ * Requires authentication.
  */
 export default function ProjectsPage() {
   const { theme } = useTheme();
+  const { authenticated, loading: authLoading } = useAuth();
+  const router = useRouter();
   const isCyberpunk = theme === "cyberpunk";
 
+  // All hooks must be declared before any conditional returns
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<ProjectCategory | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<ProjectCategory | null>("NEW_CORE");
+
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!authLoading && !authenticated) {
+      router.push("/");
+    }
+  }, [authLoading, authenticated, router]);
 
   // Fetch projects from database
   useEffect(() => {
+    if (!authenticated) return; // Don't fetch if not authenticated
+
     async function fetchProjects() {
       try {
         setLoading(true);
@@ -79,9 +95,9 @@ export default function ProjectsPage() {
     }
 
     fetchProjects();
-  }, [selectedCategory]);
+  }, [selectedCategory, authenticated]);
 
-  // Filter and group projects by circle
+  // Filter and group projects by circle (must be before conditional returns)
   const projectsByCircle = useMemo(() => {
     // Filter by search
     const filtered = projects.filter((project) => {
@@ -118,6 +134,24 @@ export default function ProjectsPage() {
 
   const totalProjects = projectsByCircle.reduce((sum, g) => sum + g.projects.length, 0);
 
+  // Show loading while checking auth
+  if (authLoading) {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center">
+        <Loader2
+          className={`h-12 w-12 animate-spin ${
+            isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-primary"
+          }`}
+        />
+      </div>
+    );
+  }
+
+  // Don't render if not authenticated
+  if (!authenticated) {
+    return null;
+  }
+
   const categoryConfig: Record<ProjectCategory, { label: string; color: string; bgColor: string }> = {
     NEW_CORE: {
       label: "Core",
@@ -145,7 +179,6 @@ export default function ProjectsPage() {
     { value: null, label: "All" },
     { value: "NEW_CORE", label: "New Core" },
     { value: "OLD_CORE", label: "Old Core" },
-    { value: "PISCINE", label: "Piscine" },
     { value: "OTHER", label: "Other" },
   ];
 

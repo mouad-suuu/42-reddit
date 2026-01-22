@@ -19,13 +19,16 @@ export async function GET(request: NextRequest) {
 
     // Build where clause
     const where: {
-      category?: ProjectCategory;
+      category?: ProjectCategory | { not: ProjectCategory };
       circle?: number | { gte: number };
       OR?: { title: { contains: string; mode: "insensitive" } }[];
     } = {};
 
     if (category && Object.values(ProjectCategory).includes(category)) {
       where.category = category;
+    } else {
+      // When no category specified (All), exclude PISCINE
+      where.category = { not: "PISCINE" };
     }
 
     // Filter by circle - if specific circle requested, use it; otherwise show all >= 0

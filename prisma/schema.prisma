@@ -85,6 +85,7 @@ model Post {
   comments  Comment[]
   votes     Vote[]
 
+  @@unique([authorId, projectId, type]) // One README per user per project
   @@index([projectId])
   @@index([authorId, projectId, type])
   @@schema("public")
@@ -138,6 +139,8 @@ model Vote {
 
   createdAt  DateTime       @default(now())
 
+  @@unique([userId, postId])    // One vote per user per post
+  @@unique([userId, commentId]) // One vote per user per comment
   @@index([userId])
   @@index([postId])
   @@index([commentId])

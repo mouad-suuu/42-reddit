@@ -15,6 +15,7 @@ interface UserProfile {
   displayName: string | null;
   avatarUrl: string | null;
   campus: string | null;
+  role: "USER" | "ADMIN";
 }
 
 interface User {

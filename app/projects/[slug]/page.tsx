@@ -1,12 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useState, useEffect, useCallback } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { Comment, CommentData } from "@/components/comment";
+import { ReadmePreviewCard, ReadmePreviewData } from "@/components/readme-preview-card";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { MessageSquare, FileText, Send, Loader2, Plus } from "lucide-react";
 
 type ProjectCategory = "NEW_CORE" | "OLD_CORE" | "PISCINE" | "OTHER";
 
@@ -24,19 +30,44 @@ interface Project {
   };
 }
 
+type ViewType = "comments" | "readmes";
+
 /**
- * Project detail page showing project info, posts, and comments.
+ * Project detail page with Comments and READMEs views.
+ * Posting controls are in the sidebar.
  */
 export default function ProjectDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const slug = params.slug as string;
   const { theme } = useTheme();
   const isCyberpunk = theme === "cyberpunk";
+  const { authenticated, loading: authLoading, login } = useAuth();
 
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeView, setActiveView] = useState<ViewType>("comments");
 
+  // Comment state
+  const [comments, setComments] = useState<CommentData[]>([]);
+  const [commentsLoading, setCommentsLoading] = useState(false);
+  const [showCommentForm, setShowCommentForm] = useState(false);
+  const [newComment, setNewComment] = useState("");
+  const [isPostingComment, setIsPostingComment] = useState(false);
+
+  // READMEs state
+  const [readmes, setReadmes] = useState<ReadmePreviewData[]>([]);
+  const [readmesLoading, setReadmesLoading] = useState(false);
+
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!authLoading && !authenticated) {
+      router.push("/");
+    }
+  }, [authLoading, authenticated, router]);
+
+  // Fetch project data
   useEffect(() => {
     async function fetchProject() {
       try {
@@ -69,6 +100,75 @@ export default function ProjectDetailPage() {
     }
   }, [slug]);
 
+  // Fetch comments
+  const fetchComments = useCallback(async () => {
+    if (!project) return;
+    setCommentsLoading(true);
+    try {
+      const response = await fetch(`/api/projects/${slug}/comments`);
+      if (response.ok) {
+        const data = await response.json();
+        setComments(data.comments || []);
+      }
+    } catch (err) {
+      console.error("Failed to fetch comments:", err);
+    } finally {
+      setCommentsLoading(false);
+    }
+  }, [project, slug]);
+
+  // Fetch READMEs
+  const fetchReadmes = useCallback(async () => {
+    if (!project) return;
+    setReadmesLoading(true);
+    try {
+      const response = await fetch(`/api/projects/${slug}/posts`);
+      if (response.ok) {
+        const data = await response.json();
+        setReadmes(data.posts || []);
+      }
+    } catch (err) {
+      console.error("Failed to fetch READMEs:", err);
+    } finally {
+      setReadmesLoading(false);
+    }
+  }, [project, slug]);
+
+  useEffect(() => {
+    if (project) {
+      if (activeView === "comments") {
+        fetchComments();
+      } else {
+        fetchReadmes();
+      }
+    }
+  }, [project, activeView, fetchComments, fetchReadmes]);
+
+  // Post new comment
+  const handlePostComment = async () => {
+    if (!newComment.trim() || isPostingComment) return;
+
+    setIsPostingComment(true);
+    try {
+      const response = await fetch(`/api/projects/${slug}/comments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: newComment.trim() }),
+      });
+
+      if (!response.ok) throw new Error("Failed to post comment");
+
+      const data = await response.json();
+      setComments((prev) => [data.comment, ...prev]);
+      setNewComment("");
+      setShowCommentForm(false);
+    } catch (err) {
+      console.error("Failed to post comment:", err);
+    } finally {
+      setIsPostingComment(false);
+    }
+  };
+
   const categoryConfig: Record<ProjectCategory, { label: string; color: string; bgColor: string }> = {
     NEW_CORE: {
       label: "New Core",
@@ -92,25 +192,44 @@ export default function ProjectDetailPage() {
     },
   };
 
+  // Auth loading state
+  if (authLoading) {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center">
+        <Loader2
+          className={cn(
+            "h-12 w-12 animate-spin",
+            isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-primary"
+          )}
+        />
+      </div>
+    );
+  }
+
+  // Don't render if not authenticated
+  if (!authenticated) {
+    return null;
+  }
+
   // Loading state
   if (loading) {
     return (
       <div className="container mx-auto px-6 py-10">
         <div
-          className={`text-center py-20 ${
+          className={cn(
+            "text-center py-20",
             isCyberpunk
               ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)]"
               : "bg-card border-2 border-border manga-shadow"
-          }`}
+          )}
         >
-          <div
-            className={`w-12 h-12 border-4 rounded-full animate-spin mx-auto mb-4 ${
-              isCyberpunk
-                ? "border-[var(--cyber-cyan)] border-t-transparent"
-                : "border-foreground border-t-transparent"
-            }`}
+          <Loader2
+            className={cn(
+              "w-12 h-12 animate-spin mx-auto mb-4",
+              isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-foreground"
+            )}
           />
-          <p className={`font-mono ${isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-foreground"}`}>
+          <p className={cn("font-mono", isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-foreground")}>
             Loading project...
           </p>
         </div>
@@ -123,17 +242,18 @@ export default function ProjectDetailPage() {
     return (
       <div className="container mx-auto px-6 py-10">
         <div
-          className={`text-center py-20 ${
+          className={cn(
+            "text-center py-20",
             isCyberpunk
               ? "bg-[var(--cyber-panel)] border border-red-500/50"
               : "bg-card border-2 border-destructive manga-shadow"
-          }`}
+          )}
         >
           <div className="text-6xl mb-4">🔍</div>
-          <h3 className={`text-xl font-bold mb-2 ${isCyberpunk ? "text-white" : ""}`}>
+          <h3 className={cn("text-xl font-bold mb-2", isCyberpunk && "text-white")}>
             {error || "Project not found"}
           </h3>
-          <p className={`mb-4 ${isCyberpunk ? "text-gray-400" : "text-muted-foreground"}`}>
+          <p className={cn("mb-4", isCyberpunk ? "text-gray-400" : "text-muted-foreground")}>
             This project may not have been discovered yet.
           </p>
           <Button asChild>
@@ -149,8 +269,8 @@ export default function ProjectDetailPage() {
   return (
     <div className="container mx-auto px-6 py-10">
       {/* Breadcrumb */}
-      <div className={`mb-6 text-sm font-mono ${isCyberpunk ? "text-gray-500" : "text-muted-foreground"}`}>
-        <Link href="/projects" className={`hover:underline ${isCyberpunk ? "hover:text-[var(--cyber-cyan)]" : ""}`}>
+      <div className={cn("mb-6 text-sm font-mono", isCyberpunk ? "text-gray-500" : "text-muted-foreground")}>
+        <Link href="/projects" className={cn("hover:underline", isCyberpunk && "hover:text-[var(--cyber-cyan)]")}>
           Projects
         </Link>
         <span className="mx-2">/</span>
@@ -159,143 +279,298 @@ export default function ProjectDetailPage() {
 
       {/* Project Header */}
       <Card
-        className={`p-8 mb-8 ${
+        className={cn(
+          "p-6 mb-8",
           isCyberpunk
             ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)]"
             : "border-2 border-border manga-shadow"
-        }`}
+        )}
       >
-        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
-          <div>
+        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+          <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
               <h1
-                className={`text-3xl font-display font-black uppercase ${
+                className={cn(
+                  "text-3xl font-display font-black uppercase",
                   isCyberpunk ? "cyber-gradient-text" : "text-foreground"
-                }`}
+                )}
               >
                 {project.title}
               </h1>
-              <Badge variant="outline" className={`${config.color} ${config.bgColor}`}>
+              <Badge variant="outline" className={cn(config.color, config.bgColor)}>
                 {config.label}
               </Badge>
-            </div>
-            <p className={`text-sm font-mono ${isCyberpunk ? "text-gray-500" : "text-muted-foreground"}`}>
-              slug: {project.slug}
-              {project.fortyTwoProjectId && ` • 42 ID: ${project.fortyTwoProjectId}`}
-            </p>
-          </div>
-
-          <div className={`flex gap-4 text-sm ${isCyberpunk ? "text-gray-400" : "text-muted-foreground"}`}>
-            <div className="text-center">
-              <div className={`text-2xl font-bold ${isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-foreground"}`}>
-                {project._count.posts}
-              </div>
-              <div className="text-xs uppercase">Posts</div>
-            </div>
-            <div className="text-center">
-              <div className={`text-2xl font-bold ${isCyberpunk ? "text-[var(--cyber-purple)]" : "text-foreground"}`}>
-                {project._count.comments}
-              </div>
-              <div className="text-xs uppercase">Comments</div>
-            </div>
-          </div>
-        </div>
-
-      </Card>
-
-      {/* Content sections */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main content - Posts */}
-        <div className="lg:col-span-2">
-          <Card
-            className={`p-6 ${
-              isCyberpunk
-                ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)]"
-                : "border-2 border-border manga-shadow"
-            }`}
-          >
-            <h2
-              className={`text-xl font-display font-bold uppercase mb-4 ${
-                isCyberpunk ? "text-white" : "text-foreground"
-              }`}
-            >
-              📝 Posts & READMEs
-            </h2>
-
-            <div
-              className={`text-center py-12 ${
-                isCyberpunk ? "text-gray-500" : "text-muted-foreground"
-              }`}
-            >
-              <div className="text-4xl mb-4">📭</div>
-              <p className="mb-4">No posts yet. Be the first to share!</p>
-              <Button disabled className="opacity-50">
-                Share your README (coming soon)
-              </Button>
-            </div>
-          </Card>
-        </div>
-
-        {/* Sidebar */}
-        <div className="space-y-6">
-          {/* Quick actions */}
-          <Card
-            className={`p-6 ${
-              isCyberpunk
-                ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)]"
-                : "border-2 border-border manga-shadow"
-            }`}
-          >
-            <h3
-              className={`text-lg font-display font-bold uppercase mb-4 ${
-                isCyberpunk ? "text-white" : "text-foreground"
-              }`}
-            >
-              Quick Actions
-            </h3>
-            <div className="space-y-2">
-              <Button className="w-full" disabled>
-                📝 Share README
-              </Button>
-              <Button variant="outline" className="w-full" disabled>
-                💬 Start Discussion
-              </Button>
               {project.fortyTwoProjectId && (
                 <Button
                   variant="outline"
-                  className="w-full"
+                  size="sm"
                   asChild
+                  className={cn(
+                    "ml-2",
+                    isCyberpunk && "border-[var(--cyber-border)] hover:border-[var(--cyber-cyan)]"
+                  )}
                 >
                   <a
                     href={`https://projects.intra.42.fr/projects/${project.slug}`}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    🔗 View on Intra
+                    🔗 See in 42
                   </a>
                 </Button>
               )}
             </div>
-          </Card>
+            <p className={cn("text-sm font-mono", isCyberpunk ? "text-gray-500" : "text-muted-foreground")}>
+              slug: {project.slug}
+              {project.fortyTwoProjectId && ` • 42 ID: ${project.fortyTwoProjectId}`}
+            </p>
+          </div>
 
-          {/* Who completed this */}
+          <div className={cn("flex gap-4 text-sm", isCyberpunk ? "text-gray-400" : "text-muted-foreground")}>
+            <div className="text-center">
+              <div className={cn("text-2xl font-bold", isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-foreground")}>
+                {project._count.posts}
+              </div>
+              <div className="text-xs uppercase">READMEs</div>
+            </div>
+            <div className="text-center">
+              <div className={cn("text-2xl font-bold", isCyberpunk ? "text-[var(--cyber-purple)]" : "text-foreground")}>
+                {project._count.comments}
+              </div>
+              <div className="text-xs uppercase">Comments</div>
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      {/* View Toggle Buttons */}
+      <div className="flex gap-4 mb-8">
+        <Button
+          size="lg"
+          variant={activeView === "comments" ? "default" : "outline"}
+          onClick={() => setActiveView("comments")}
+          className={cn(
+            "flex-1 text-lg font-bold uppercase py-6",
+            activeView === "comments" && isCyberpunk && "bg-[var(--cyber-cyan)] text-black hover:bg-[var(--cyber-cyan)]/80",
+            activeView !== "comments" && isCyberpunk && "border-[var(--cyber-border)] hover:border-[var(--cyber-cyan)]"
+          )}
+        >
+          <MessageSquare className="h-5 w-5 mr-3" />
+          Discussion ({comments.length})
+        </Button>
+        <Button
+          size="lg"
+          variant={activeView === "readmes" ? "default" : "outline"}
+          onClick={() => setActiveView("readmes")}
+          className={cn(
+            "flex-1 text-lg font-bold uppercase py-6",
+            activeView === "readmes" && isCyberpunk && "bg-[var(--cyber-purple)] text-white hover:bg-[var(--cyber-purple)]/80",
+            activeView !== "readmes" && isCyberpunk && "border-[var(--cyber-border)] hover:border-[var(--cyber-purple)]"
+          )}
+        >
+          <FileText className="h-5 w-5 mr-3" />
+          READMEs ({readmes.length})
+        </Button>
+      </div>
+
+      {/* Main content with sidebar */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        {/* Main content */}
+        <div className="lg:col-span-3">
+          {/* Comments View */}
+          {activeView === "comments" && (
+            <Card
+              className={cn(
+                "p-6",
+                isCyberpunk
+                  ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)]"
+                  : "border-2 border-border"
+              )}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h2 className={cn("text-xl font-display font-bold uppercase", isCyberpunk ? "text-white" : "text-foreground")}>
+                  💬 Discussion
+                </h2>
+              </div>
+
+              {commentsLoading ? (
+                <div className="text-center py-12">
+                  <Loader2 className={cn("h-8 w-8 animate-spin mx-auto", isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-muted-foreground")} />
+                </div>
+              ) : comments.length === 0 ? (
+                <div className={cn("text-center py-12", isCyberpunk ? "text-gray-500" : "text-muted-foreground")}>
+                  <div className="text-5xl mb-4">💬</div>
+                  <p className="text-lg mb-2">No comments yet.</p>
+                  <p className="text-sm">Be the first to share your thoughts!</p>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {comments.map((comment) => (
+                    <Comment
+                      key={comment.id}
+                      comment={comment}
+                      projectSlug={slug}
+                      userVotes={{}}
+                    />
+                  ))}
+                </div>
+              )}
+            </Card>
+          )}
+
+          {/* READMEs View */}
+          {activeView === "readmes" && (
+            <Card
+              className={cn(
+                "p-6",
+                isCyberpunk
+                  ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)]"
+                  : "border-2 border-border"
+              )}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h2 className={cn("text-xl font-display font-bold uppercase", isCyberpunk ? "text-white" : "text-foreground")}>
+                  📚 READMEs
+                </h2>
+              </div>
+
+              {readmesLoading ? (
+                <div className="text-center py-12">
+                  <Loader2 className={cn("h-8 w-8 animate-spin mx-auto", isCyberpunk ? "text-[var(--cyber-purple)]" : "text-muted-foreground")} />
+                </div>
+              ) : readmes.length === 0 ? (
+                <div className={cn("text-center py-12", isCyberpunk ? "text-gray-500" : "text-muted-foreground")}>
+                  <div className="text-5xl mb-4">📚</div>
+                  <p className="text-lg mb-2">No READMEs yet.</p>
+                  <p className="text-sm mb-4">Be the first to share your project notes and guides!</p>
+                  <Button
+                    asChild
+                    className={cn(isCyberpunk && "bg-[var(--cyber-purple)] hover:bg-[var(--cyber-purple)]/80")}
+                  >
+                    <Link href={`/projects/${slug}/readmes/new`}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Share Your First README
+                    </Link>
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {readmes.map((readme) => (
+                    <ReadmePreviewCard
+                      key={readme.id}
+                      readme={readme}
+                      projectSlug={slug}
+                    />
+                  ))}
+                </div>
+              )}
+            </Card>
+          )}
+        </div>
+
+        {/* Sidebar */}
+        <div className="space-y-6">
+          {/* Add Comment (only show in comments view) */}
+          {activeView === "comments" && (
+            <Card
+              className={cn(
+                "p-4",
+                isCyberpunk
+                  ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)]"
+                  : "border-2 border-border manga-shadow"
+              )}
+            >
+              {!showCommentForm ? (
+                <Button
+                  className={cn(
+                    "w-full",
+                    isCyberpunk && "bg-[var(--cyber-cyan)] text-black hover:bg-[var(--cyber-cyan)]/80"
+                  )}
+                  onClick={() => {
+                    if (!authenticated) {
+                      login();
+                      return;
+                    }
+                    setShowCommentForm(true);
+                  }}
+                  size="sm"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Comment
+                </Button>
+              ) : (
+                <div className="space-y-3">
+                  <Textarea
+                    placeholder="Ask a question, share a tip..."
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    className={cn(
+                      "min-h-[120px] text-sm",
+                      isCyberpunk && "bg-[var(--cyber-dark)] border-[var(--cyber-border)]"
+                    )}
+                  />
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={handlePostComment}
+                      disabled={!newComment.trim() || isPostingComment}
+                      size="sm"
+                      className={cn(
+                        "flex-1",
+                        isCyberpunk && "bg-[var(--cyber-cyan)] text-black hover:bg-[var(--cyber-cyan)]/80"
+                      )}
+                    >
+                      <Send className="h-3 w-3 mr-1" />
+                      {isPostingComment ? "Posting..." : "Post"}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setShowCommentForm(false);
+                        setNewComment("");
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </Card>
+          )}
+
+
+
+          {/* Stats */}
           <Card
-            className={`p-6 ${
+            className={cn(
+              "p-4",
               isCyberpunk
                 ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)]"
                 : "border-2 border-border manga-shadow"
-            }`}
+            )}
           >
             <h3
-              className={`text-lg font-display font-bold uppercase mb-4 ${
+              className={cn(
+                "text-sm font-display font-bold uppercase mb-3",
                 isCyberpunk ? "text-white" : "text-foreground"
-              }`}
+              )}
             >
-              👥 Who Completed This
+              Stats
             </h3>
-            <p className={`text-sm ${isCyberpunk ? "text-gray-500" : "text-muted-foreground"}`}>
-              Coming soon - see students who completed this project
-            </p>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className={isCyberpunk ? "text-gray-400" : "text-muted-foreground"}>Comments</span>
+                <span className={cn("font-bold", isCyberpunk ? "text-[var(--cyber-purple)]" : "text-foreground")}>
+                  {project._count.comments}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className={isCyberpunk ? "text-gray-400" : "text-muted-foreground"}>READMEs</span>
+                <span className={cn("font-bold", isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-foreground")}>
+                  {project._count.posts}
+                </span>
+              </div>
+            </div>
           </Card>
         </div>
       </div>

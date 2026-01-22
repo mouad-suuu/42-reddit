@@ -19,6 +19,9 @@ components/project-card.tsx: Project card display component for 42 projects
 components/auth-provider.tsx: Authentication context provider
 components/project-readme.tsx: README markdown display component for project posts
 components/theme-toggle.tsx: Theme toggle button for switching between Cyberpunk and Manga themes
+components/vote-button.tsx: Upvote/downvote button with optimistic updates
+components/comment.tsx: Threaded comment component with voting and reply functionality
+components/readme-card.tsx: README card with markdown preview and voting
 
 ## Pages
 
@@ -27,7 +30,7 @@ app/auth/callback/page.tsx: OAuth callback handler page
 app/profile/page.tsx: Current user's profile showing their 42 projects and stats
 app/profile/[login]/page.tsx: Public profile page to view any user's 42 data by login
 app/projects/page.tsx: Browse projects stored in database (discovered from user profiles)
-app/projects/[slug]/page.tsx: Project detail page with posts and comments
+app/projects/[slug]/page.tsx: Project detail page with Discussion and READMEs tabs
 
 ## Backend API (Next.js Route Handlers)
 
@@ -41,7 +44,10 @@ app/api/42/users/[login]/route.ts: Fetch any user's 42 profile by login (also sy
 app/api/42/projects/route.ts: List 42 curriculum projects from 42 API
 app/api/42/projects/[slug]/route.ts: Single project details from 42 API
 app/api/projects/route.ts: List projects from database with category filter
-app/api/projects/[slug]/route.ts: Get project details, lazy-loads description from 42 API
+app/api/projects/[slug]/route.ts: Get project details from database
+app/api/projects/[slug]/posts/route.ts: List and create README posts for a project
+app/api/projects/[slug]/comments/route.ts: List and create threaded comments for a project
+app/api/votes/route.ts: Create/update/remove votes on posts and comments
 
 ## Core Libraries
 
