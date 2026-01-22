@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET =
-  process.env.JWT_SECRET || "your-secret-key-change-in-production";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 export interface JWTPayload {
   sub: string;
@@ -18,7 +17,7 @@ export interface JWTPayload {
 export function generateToken(
   payload: Omit<JWTPayload, "iat" | "exp">
 ): string {
-  return jwt.sign(payload, JWT_SECRET, {
+  return jwt.sign(payload, JWT_SECRET!, {
     expiresIn: "7d",
   });
 }
@@ -29,7 +28,7 @@ export function generateToken(
  */
 export function verifyToken(token: string): JWTPayload {
   try {
-    return jwt.verify(token, JWT_SECRET) as JWTPayload;
+    return jwt.verify(token, JWT_SECRET!) as JWTPayload;
   } catch (error) {
     throw new Error("Invalid or expired token");
   }
