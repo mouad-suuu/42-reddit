@@ -1,0 +1,10 @@
+services:
+  web:
+    image: 42-reddit
+    build: .
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env             # This automatically loads your .env file!
+    environment:
+      - NODE_ENV=production
