@@ -5,12 +5,14 @@ FROM oven/bun:1 AS base
 FROM base AS deps
 WORKDIR /app
 COPY package.json bun.lock ./
-# Install dependencies including devDependencies (needed for build)
+# Copy prisma directory because "postinstall": "prisma generate" needs it
+COPY prisma ./prisma
+# Install dependencies including devDependencies
 RUN bun install --frozen-lockfile
 
 # 3. Builder Stage: Build the app
 FROM base AS builder
-WORKDIR /
+WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
@@ -20,7 +22,7 @@ ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
 ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
 ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-# Generate Prisma Client
+# Generate Prisma Client (Just to be safe, though postinstall ran it)
 RUN bunx prisma generate
 
 # Build the Next.js application
@@ -28,15 +30,15 @@ RUN bun run build
 
 # 4. Runner Stage: The actual running container
 FROM base AS runner
-WORKDIR /
+WORKDIR /app
 
 ENV NODE_ENV=production
 
 # Copy only the necessary files for the standalone build
-COPY --from=builder /public ./public
+COPY --from=builder /app/public ./public
 # Automatically leverages output traces to reduce image size
-COPY --from=builder /.next/standalone ./
-COPY --from=builder /.next/static ./.next/static
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 
 # Open port 3000
 EXPOSE 3000
