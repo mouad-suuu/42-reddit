@@ -60,9 +60,9 @@ export async function GET(
 
     // Calculate vote scores and check completion status
     const postsWithScores = await Promise.all(
-      posts.map(async (post) => {
-        const score = post.votes.reduce((sum, vote) => sum + vote.value, 0);
-        
+      posts.map(async (post: typeof posts[number]) => {
+        const score = post.votes.reduce((sum: number, vote: { value: number }) => sum + vote.value, 0);
+
         // Check if author completed this project (has a note/grade)
         let hasCompleted = false;
         if (post.author.intraId && project.fortyTwoProjectId) {
