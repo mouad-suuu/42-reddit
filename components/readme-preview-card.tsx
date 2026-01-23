@@ -53,28 +53,23 @@ export function ReadmePreviewCard({ readme, userVote, projectSlug }: ReadmePrevi
 
   return (
     <Link href={`/projects/${projectSlug}/readmes/${readme.id}`} className="block">
-      <Card className="p-5 cursor-pointer t-card t-card-interactive">
-        <div className="flex gap-4">
-          {/* Vote buttons - stop propagation to prevent card navigation */}
-          <div onClick={(e) => e.preventDefault()} className="shrink-0">
-            <VoteButton
-              targetType="POST"
-              targetId={readme.id}
-              initialScore={readme.score}
-              initialUserVote={userVote}
-              size="md"
-              onAuthRequired={login}
-              readOnly={true}
-            />
+      <Card className="p-3 cursor-pointer t-card t-card-interactive">
+        <div className="flex gap-3">
+          {/* Score display - voting is only available on full README page */}
+          <div className="shrink-0 flex items-center">
+            <div className="flex flex-col items-center justify-center min-w-[40px] px-2 py-1 rounded t-card">
+              <span className="text-xs font-bold t-text-subtle">Votes</span>
+              <span className="text-lg font-bold t-text-primary">{readme.score}</span>
+            </div>
           </div>
 
           {/* Content */}
           <div className="flex-1 min-w-0">
             {/* Header */}
-            <div className="flex items-start justify-between gap-4 mb-3">
+            <div className="flex items-start justify-between gap-4 mb-2">
               <div className="flex items-center gap-2">
-                <FileText className="h-5 w-5 shrink-0 t-text-accent" />
-                <h3 className="text-lg font-bold t-text-primary">
+                <FileText className="h-4 w-4 shrink-0 t-text-accent" />
+                <h3 className="text-base font-bold t-text-primary">
                   {readme.title || "Untitled README"}
                 </h3>
               </div>
@@ -90,7 +85,7 @@ export function ReadmePreviewCard({ readme, userVote, projectSlug }: ReadmePrevi
             </div>
 
             {/* Author info - stop propagation for profile links */}
-            <div className="flex items-center gap-2 mb-4" onClick={(e) => e.preventDefault()}>
+            <div className="flex items-center gap-2 mb-2" onClick={(e) => e.preventDefault()}>
               <Link href={`/profile/${readme.author.intraLogin}`} onClick={(e) => e.stopPropagation()}>
                 <Avatar className="h-6 w-6">
                   <AvatarImage
@@ -123,7 +118,7 @@ export function ReadmePreviewCard({ readme, userVote, projectSlug }: ReadmePrevi
 
             {/* Markdown preview */}
             <div
-              className="mb-3 line-clamp-4 markdown-body t-markdown-preview"
+              className="mb-2 line-clamp-3 markdown-body t-markdown-preview text-sm"
               style={{ backgroundColor: 'transparent' }}
             >
               <ReactMarkdown remarkPlugins={[remarkGfm]}>
