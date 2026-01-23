@@ -227,59 +227,68 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Stats */}
-          <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4 md:ml-auto">
-            {cursus && (
-              <div className="col-span-2 grid grid-cols-2 gap-4">
-                <div className="text-center p-2 animate-in-up delay-100 bg-secondary border-2 border-border">
-                  <div className="text-2xl font-display font-black text-foreground">
+          {/* Stats - Responsive grid */}
+          <div className="w-full md:w-auto md:flex-1">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
+              {/* Level */}
+              {cursus && (
+                <div className="text-center p-3 animate-in-up delay-100 bg-secondary border-2 border-border">
+                  <div className="text-2xl md:text-3xl font-display font-black text-foreground">
                     <CountUp end={cursus.level} decimals={2} duration={2000} />
                   </div>
                   <div className="text-xs uppercase font-bold text-muted-foreground">
                     Level
                   </div>
                 </div>
+              )}
 
-                {cursus.blackholedAt && (
-                  <div className="text-center p-2 animate-in-up delay-200 bg-status-dev-fail-bg border border-status-dev-fail-border">
-                    <div className="text-sm font-mono font-bold mt-1 text-status-dev-fail">
-                      <span className="block text-xs uppercase opacity-70 mb-1 text-foreground">Black Hole</span>
-                      {new Date(cursus.blackholedAt).toLocaleDateString("en-FR", {
-                        day: "numeric",
-                        month: "short",
-                      })}
-                    </div>
+              {/* Black Hole */}
+              {cursus?.blackholedAt && (
+                <div className="text-center p-3 animate-in-up delay-150 bg-status-dev-fail-bg border-2 border-status-dev-fail-border">
+                  <div className="text-lg md:text-xl font-mono font-bold text-status-dev-fail">
+                    {new Date(cursus.blackholedAt).toLocaleDateString("en-FR", {
+                      day: "numeric",
+                      month: "short",
+                    })}
                   </div>
-                )}
-              </div>
-            )}
+                  <div className="text-xs uppercase font-bold text-muted-foreground">
+                    Black Hole
+                  </div>
+                </div>
+              )}
 
-            <div className="text-center p-2 animate-in-up delay-300 bg-secondary border-2 border-border">
-              <div className="text-2xl font-display font-black text-foreground">
-                <CountUp end={user.correctionPoints} duration={2500} />
-              </div>
-              <div className="text-xs uppercase font-bold text-muted-foreground">
-                Eval Points
-              </div>
-            </div>
-            <div className="text-center p-2 animate-in-up delay-300 bg-secondary border-2 border-border">
-              <div className="text-2xl font-display font-black text-foreground">
-                <CountUp end={user.wallet} duration={2500} />
-              </div>
-              <div className="text-xs uppercase font-bold text-muted-foreground">
-                Wallet
-              </div>
-            </div>
-            {user.location && (
-              <div className="text-center p-2 animate-in-up delay-300 bg-status-success-bg border-2 border-status-success-border">
-                <div className="text-lg font-mono font-bold text-status-success">
-                  {user.location}
+              {/* Eval Points */}
+              <div className="text-center p-3 animate-in-up delay-200 bg-secondary border-2 border-border">
+                <div className="text-2xl md:text-3xl font-display font-black text-foreground">
+                  <CountUp end={user.correctionPoints} duration={2500} />
                 </div>
                 <div className="text-xs uppercase font-bold text-muted-foreground">
-                  Location
+                  Eval Points
                 </div>
               </div>
-            )}
+
+              {/* Wallet */}
+              <div className="text-center p-3 animate-in-up delay-250 bg-secondary border-2 border-border">
+                <div className="text-2xl md:text-3xl font-display font-black text-foreground">
+                  <CountUp end={user.wallet} duration={2500} />
+                </div>
+                <div className="text-xs uppercase font-bold text-muted-foreground">
+                  Wallet
+                </div>
+              </div>
+
+              {/* Location - only shown if logged in at school */}
+              {user.location && (
+                <div className="text-center p-3 animate-in-up delay-300 bg-status-success-bg border-2 border-status-success-border col-span-2 sm:col-span-1">
+                  <div className="text-lg md:text-xl font-mono font-bold text-status-success">
+                    {user.location}
+                  </div>
+                  <div className="text-xs uppercase font-bold text-muted-foreground">
+                    Location
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

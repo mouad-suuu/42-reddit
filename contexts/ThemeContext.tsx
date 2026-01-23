@@ -42,12 +42,25 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // Apply theme to HTML element and persist to localStorage
+  // Disables transitions during switch for instant change
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     const root = document.documentElement;
+
+    // Add class to disable ALL transitions during theme switch
+    root.classList.add("theme-switching");
+
+    // Apply the new theme
     root.setAttribute("data-theme", theme);
     localStorage.setItem(STORAGE_KEY, theme);
+
+    // Re-enable transitions after a brief delay (allows repaint)
+    const timeout = setTimeout(() => {
+      root.classList.remove("theme-switching");
+    }, 50);
+
+    return () => clearTimeout(timeout);
   }, [theme]);
 
   const setTheme = (newTheme: Theme) => {
