@@ -318,78 +318,90 @@ export default function ProjectsPage() {
 
           {/* Circle rows */}
           <div className="space-y-8">
-            {projectsByCircle.map(({ circle, label, projects: circleProjects }) => (
-              <div
-                key={circle}
-                className={`transition-all duration-300 ${isCyberpunk
+            {projectsByCircle.map(({ circle, label, projects: circleProjects }) => {
+              // Parse label to separate "Circle" from the number
+              const isCircleKey = label.startsWith("Circle ");
+              const circleNum = isCircleKey ? label.replace("Circle ", "") : "";
+              const displayLabel = isCircleKey ? "CIRCLE" : label;
+              const badgeContent = isCircleKey ? circleNum : circleProjects.length;
+
+              return (
+                <div
+                  key={circle}
+                  className={`transition-all duration-300 ${isCyberpunk
                     ? "border-l-4 " + (circleColors[circle] || "border-l-gray-500") + " bg-[var(--cyber-panel)]/50"
                     : "relative bg-white border-4 border-black shadow-[8px_8px_0px_0px_black] overflow-visible mb-12"
-                  }`}
-                style={!isCyberpunk ? {
-                  backgroundImage: "radial-gradient(#000 1px, transparent 1px)",
-                  backgroundSize: "20px 20px"
-                } : {}}
-              >
-                {/* Circle header */}
-                <div
-                  className={`${isCyberpunk
+                    }`}
+                  style={!isCyberpunk ? {
+                    backgroundImage: "radial-gradient(#000 1px, transparent 1px)",
+                    backgroundSize: "20px 20px"
+                  } : {}}
+                >
+                  {/* Circle header */}
+                  <div
+                    className={`${isCyberpunk
                       ? "px-4 py-3 border-b border-[var(--cyber-border)]"
                       : "absolute -top-5 -left-3 bg-black text-white px-6 py-2 transform -skew-x-12 border-2 border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] z-10"
-                    }`}
-                >
-                  <h2
-                    className={`text-xl font-display font-black uppercase ${isCyberpunk ? "text-white" : "text-white tracking-widest"
                       }`}
                   >
-                    {label}
-                    <span className={`ml-3 text-sm font-bold ${isCyberpunk ? "text-gray-500 font-normal" : "bg-white text-black px-2 py-0.5 transform skew-x-12 inline-block"}`}>
-                      {isCyberpunk ? `(${circleProjects.length} projects)` : circleProjects.length}
-                    </span>
-                  </h2>
-                </div>
+                    <h2
+                      className={`text-xl font-display font-black uppercase flex items-center gap-3 ${isCyberpunk ? "text-white" : "text-white tracking-widest"
+                        }`}
+                    >
+                      {displayLabel}
+                      <span className={`text-sm font-bold flex items-center justify-center ${isCyberpunk
+                        ? "text-gray-500 font-normal"
+                        : "bg-white text-black min-w-[24px] h-6 px-1 transform skew-x-12"
+                        }`}
+                      >
+                        {badgeContent}
+                      </span>
+                    </h2>
+                  </div>
 
-                {/* Projects in this circle - horizontal scroll */}
-                <div className={`${isCyberpunk ? "p-4" : "p-8 pt-10"} overflow-x-auto`}>
-                  <div className="flex gap-6" style={{ minWidth: "min-content" }}>
-                    {circleProjects.map((project) => (
-                      <Link href={`/projects/${project.slug}`} key={project.id}>
-                        <Card
-                          className={`w-64 shrink-0 transition-all cursor-pointer ${isCyberpunk
+                  {/* Projects GridContainer - Flex Wrap instead of Scroll */}
+                  <div className={`${isCyberpunk ? "p-4" : "p-8 pt-10"}`}>
+                    <div className="flex flex-wrap gap-6">
+                      {circleProjects.map((project) => (
+                        <Link href={`/projects/${project.slug}`} key={project.id}>
+                          <Card
+                            className={`w-64 shrink-0 transition-all cursor-pointer ${isCyberpunk
                               ? "p-4 bg-[var(--cyber-dark)] border border-[var(--cyber-border)] hover:border-[var(--cyber-cyan)] hover:shadow-[0_0_20px_rgba(0,255,255,0.2)] hover:scale-105"
-                              : "p-4 border-2 border-black bg-white rounded-none hover:bg-black hover:text-white hover:shadow-[8px_8px_0px_0px_black] hover:-translate-y-2 group"
-                            }`}
-                        >
-                          <div className="flex items-start justify-between gap-2 mb-3">
-                            <h3
-                              className={`font-display font-bold text-sm uppercase leading-tight ${isCyberpunk ? "text-white" : "text-black group-hover:text-white"
-                                }`}
-                            >
-                              {project.title}
-                            </h3>
-                            <Badge
-                              variant="outline"
-                              className={`text-xs shrink-0 ${isCyberpunk
-                                  ? categoryConfig[project.category].color + " " + categoryConfig[project.category].bgColor
-                                  : "border-black text-black bg-transparent group-hover:border-white group-hover:text-white rounded-none"
-                                }`}
-                            >
-                              {categoryConfig[project.category].label}
-                            </Badge>
-                          </div>
-                          <div
-                            className={`flex gap-3 text-xs font-bold ${isCyberpunk ? "text-gray-500" : "text-gray-600 group-hover:text-gray-300"
+                              : "p-4 border-2 border-black bg-white rounded-none hover:bg-black hover:text-white hover:shadow-[8px_8px_0px_0px_black] hover:-translate-y-2 group h-full flex flex-col justify-between"
                               }`}
                           >
-                            <span>📝 {project._count.posts}</span>
-                            <span>💬 {project._count.comments}</span>
-                          </div>
-                        </Card>
-                      </Link>
-                    ))}
+                            <div className="flex items-start justify-between gap-2 mb-3">
+                              <h3
+                                className={`font-display font-bold text-sm uppercase leading-tight break-all hyphens-auto ${isCyberpunk ? "text-white" : "text-black group-hover:text-white"
+                                  }`}
+                              >
+                                {project.title}
+                              </h3>
+                              <Badge
+                                variant="outline"
+                                className={`text-xs shrink-0 ${isCyberpunk
+                                  ? categoryConfig[project.category].color + " " + categoryConfig[project.category].bgColor
+                                  : "border-black text-black bg-transparent group-hover:border-white group-hover:text-white rounded-none"
+                                  }`}
+                              >
+                                {categoryConfig[project.category].label}
+                              </Badge>
+                            </div>
+                            <div
+                              className={`flex gap-3 text-xs font-bold ${isCyberpunk ? "text-gray-500" : "text-gray-600 group-hover:text-gray-300"
+                                }`}
+                            >
+                              <span>📝 {project._count.posts}</span>
+                              <span>💬 {project._count.comments}</span>
+                            </div>
+                          </Card>
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Empty state */}
