@@ -1928,20 +1928,33 @@ html.theme-transitioning-to-cyberpunk #theme-transition-overlay {
 }
 
 /* === Logo Display Toggle === */
+/* Default state (manga theme) - show manga logo, hide cyber logo */
 .t-logo-manga {
   display: block;
 }
 
-[data-theme="cyberpunk"] .t-logo-manga {
+.t-logo-cyber {
   display: none;
+  position: absolute;
 }
 
-.t-logo-cyber {
+/* Cyberpunk theme - hide manga logo, show cyber logo */
+[data-theme="cyberpunk"] .t-logo-manga {
   display: none;
 }
 
 [data-theme="cyberpunk"] .t-logo-cyber {
   display: block;
+  position: static;
+}
+
+/* Explicit manga theme rules for consistency */
+[data-theme="manga"] .t-logo-manga {
+  display: block;
+}
+
+[data-theme="manga"] .t-logo-cyber {
+  display: none;
 }
 
 /* === Brand Text === */
