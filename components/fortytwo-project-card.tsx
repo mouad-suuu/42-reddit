@@ -3,7 +3,6 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { useTheme } from "@/contexts/ThemeContext";
 
 /**
  * A 42 project from the intra API.
@@ -22,6 +21,7 @@ export interface FortyTwoProject {
 /**
  * Displays a 42 project in list or grid view.
  * Links to project detail page; shows tier, difficulty, and description.
+ * Uses CSS-only theme styling for performance.
  */
 export function FortyTwoProjectCard({
   project,
@@ -30,17 +30,14 @@ export function FortyTwoProjectCard({
   project: FortyTwoProject;
   viewMode?: "grid" | "list";
 }) {
-  const { theme } = useTheme();
-  const isCyberpunk = theme === "cyberpunk";
-
-  // Tier colors
+  // Tier color classes - use CSS theme-aware classes
   const tierColors: Record<number, string> = {
-    0: isCyberpunk ? "text-gray-400" : "text-muted-foreground",
-    1: isCyberpunk ? "text-[var(--cyber-green)]" : "text-green-700",
-    2: isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-blue-700",
-    3: isCyberpunk ? "text-[var(--cyber-purple)]" : "text-purple-700",
-    4: isCyberpunk ? "text-orange-400" : "text-orange-700",
-    5: isCyberpunk ? "text-red-400" : "text-red-700",
+    0: "t-tier-0",
+    1: "t-tier-1",
+    2: "t-tier-2",
+    3: "t-tier-3",
+    4: "t-tier-4",
+    5: "t-tier-5",
   };
 
   const tierLabels: Record<number, string> = {
@@ -55,26 +52,10 @@ export function FortyTwoProjectCard({
   if (viewMode === "list") {
     return (
       <Link href={`/projects/${project.slug}`}>
-        <Card
-          className={`group flex items-center gap-6 p-5 transition-all cursor-pointer ${
-            isCyberpunk
-              ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)] hover:border-[var(--cyber-cyan)]"
-              : "hover:manga-shadow-lg border-2 border-border"
-          }`}
-        >
+        <Card className="group flex items-center gap-6 p-5 cursor-pointer t-card t-card-interactive">
           {/* Project icon */}
-          <div
-            className={`flex h-14 w-14 shrink-0 items-center justify-center border-2 ${
-              isCyberpunk
-                ? "border-[var(--cyber-border)] bg-[var(--cyber-dark)]"
-                : "border-border bg-secondary"
-            }`}
-          >
-            <span
-              className={`text-2xl font-display font-black ${
-                tierColors[project.tier ?? 0]
-              }`}
-            >
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center t-icon-box-subtle">
+            <span className={`text-2xl font-display font-black ${tierColors[project.tier ?? 0]}`}>
               {project.tier ?? "?"}
             </span>
           </div>
@@ -82,40 +63,21 @@ export function FortyTwoProjectCard({
           {/* Project info */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 mb-1">
-              <h3
-                className={`font-display font-bold uppercase truncate ${
-                  isCyberpunk
-                    ? "text-white group-hover:text-[var(--cyber-cyan)]"
-                    : "text-foreground group-hover:underline"
-                }`}
-              >
+              <h3 className="font-display font-bold uppercase truncate t-text-primary t-text-accent-hover">
                 {project.name}
               </h3>
               {project.tier !== undefined && (
-                <Badge
-                  variant={isCyberpunk ? "outline" : "secondary"}
-                  className={`shrink-0 ${
-                    isCyberpunk ? "border-[var(--cyber-border)]" : ""
-                  }`}
-                >
+                <Badge variant="secondary" className="shrink-0">
                   {tierLabels[project.tier] || `Tier ${project.tier}`}
                 </Badge>
               )}
               {project.parent && (
-                <span
-                  className={`text-xs font-mono shrink-0 ${
-                    isCyberpunk ? "text-gray-500" : "text-muted-foreground"
-                  }`}
-                >
+                <span className="text-xs font-mono shrink-0 t-text-subtle">
                   from {project.parent.name}
                 </span>
               )}
             </div>
-            <p
-              className={`text-sm line-clamp-1 ${
-                isCyberpunk ? "text-gray-400" : "text-muted-foreground"
-              }`}
-            >
+            <p className="text-sm line-clamp-1 t-text-muted">
               {project.description || "No description available."}
             </p>
           </div>
@@ -124,29 +86,13 @@ export function FortyTwoProjectCard({
           <div className="flex shrink-0 items-center gap-6 text-center">
             {project.difficulty !== undefined && (
               <div>
-                <div
-                  className={`text-xs uppercase font-bold ${
-                    isCyberpunk ? "text-gray-500" : "text-muted-foreground"
-                  }`}
-                >
-                  XP
-                </div>
-                <div
-                  className={`font-bold text-lg font-mono ${
-                    isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-foreground"
-                  }`}
-                >
+                <div className="text-xs uppercase font-bold t-text-subtle">XP</div>
+                <div className="font-bold text-lg font-mono t-text-accent">
                   {project.difficulty?.toLocaleString()}
                 </div>
               </div>
             )}
-            <div
-              className={`text-xs uppercase font-bold ${
-                isCyberpunk
-                  ? "text-gray-500 group-hover:text-white"
-                  : "text-muted-foreground group-hover:text-foreground"
-              }`}
-            >
+            <div className="text-xs uppercase font-bold t-text-muted group-hover:t-text-primary transition-colors">
               View →
             </div>
           </div>
@@ -158,86 +104,43 @@ export function FortyTwoProjectCard({
   // Grid view
   return (
     <Link href={`/projects/${project.slug}`}>
-      <Card
-        className={`group transition-all duration-300 cursor-pointer relative overflow-hidden h-full ${
-          isCyberpunk
-            ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)] hover:border-[var(--cyber-cyan)]"
-            : "hover:manga-shadow-lg border-2 border-border"
-        }`}
-      >
+      <Card className="group transition-all duration-300 cursor-pointer relative overflow-hidden h-full t-card t-card-interactive">
         {/* Top accent */}
-        {isCyberpunk ? (
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--cyber-cyan)] to-transparent transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500" />
-        ) : (
-          <div className="absolute top-0 left-0 w-full h-1 bg-primary" />
-        )}
+        <div className="absolute top-0 left-0 w-full h-1 t-accent-line" />
 
         <div className="p-5">
           {/* Header */}
           <div className="flex items-start justify-between mb-3">
-            <div
-              className={`flex h-12 w-12 items-center justify-center border-2 ${
-                isCyberpunk
-                  ? "border-[var(--cyber-border)] bg-[var(--cyber-dark)]"
-                  : "border-border bg-secondary"
-              }`}
-            >
-              <span
-                className={`text-xl font-display font-black ${
-                  tierColors[project.tier ?? 0]
-                }`}
-              >
+            <div className="flex h-12 w-12 items-center justify-center t-icon-box-subtle">
+              <span className={`text-xl font-display font-black ${tierColors[project.tier ?? 0]}`}>
                 {project.tier ?? "?"}
               </span>
             </div>
             {project.tier !== undefined && (
-              <Badge
-                variant={isCyberpunk ? "outline" : "secondary"}
-                className={isCyberpunk ? "border-[var(--cyber-border)]" : ""}
-              >
+              <Badge variant="secondary">
                 {tierLabels[project.tier] || `Tier ${project.tier}`}
               </Badge>
             )}
           </div>
 
           {/* Title */}
-          <h3
-            className={`font-display font-bold text-lg uppercase mb-2 transition-colors ${
-              isCyberpunk
-                ? "text-white group-hover:text-[var(--cyber-cyan)]"
-                : "text-foreground group-hover:underline"
-            }`}
-          >
+          <h3 className="font-display font-bold text-lg uppercase mb-2 t-text-primary t-text-accent-hover">
             {project.name}
           </h3>
 
           {/* Description */}
-          <p
-            className={`text-sm mb-4 line-clamp-2 ${
-              isCyberpunk ? "text-gray-400" : "text-muted-foreground"
-            }`}
-          >
+          <p className="text-sm mb-4 line-clamp-2 t-text-muted">
             {project.description || "No description available."}
           </p>
 
           {/* Footer */}
           <div className="flex items-center justify-between">
             {project.difficulty !== undefined && (
-              <div
-                className={`text-sm font-mono font-bold ${
-                  isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-foreground"
-                }`}
-              >
+              <div className="text-sm font-mono font-bold t-text-accent">
                 {project.difficulty?.toLocaleString()} XP
               </div>
             )}
-            <span
-              className={`text-xs font-bold uppercase ${
-                isCyberpunk
-                  ? "text-gray-500 group-hover:text-white"
-                  : "text-muted-foreground group-hover:text-foreground"
-              }`}
-            >
+            <span className="text-xs font-bold uppercase t-text-muted group-hover:t-text-primary transition-colors">
               View →
             </span>
           </div>

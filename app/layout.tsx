@@ -51,7 +51,7 @@ export default function RootLayout({
     <html lang="en" data-theme="manga" suppressHydrationWarning>
       <head>
         {/* Inline script to prevent theme flash */}
-        <script
+        {/* <script
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
@@ -64,7 +64,7 @@ export default function RootLayout({
               })();
             `,
           }}
-        />
+        /> */}
       </head>
       <body
         className={`${spaceGrotesk.variable} ${playfairDisplay.variable} ${bangers.variable} font-sans antialiased text-foreground selection:bg-primary selection:text-primary-foreground`}

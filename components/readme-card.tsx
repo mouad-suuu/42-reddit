@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { VoteButton } from "./vote-button";
 import { formatDistanceToNow } from "date-fns";
-import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import { ChevronDown, ChevronUp, FileText } from "lucide-react";
@@ -40,10 +39,9 @@ interface ReadmeCardProps {
 /**
  * README card with collapsible markdown content and voting.
  * No reply functionality - only upvote/downvote.
+ * Uses CSS-only theme styling for performance.
  */
 export function ReadmeCard({ readme, userVote }: ReadmeCardProps) {
-  const { theme } = useTheme();
-  const isCyberpunk = theme === "cyberpunk";
   const { login } = useAuth();
 
   const [isExpanded, setIsExpanded] = useState(false);
@@ -56,14 +54,7 @@ export function ReadmeCard({ readme, userVote }: ReadmeCardProps) {
     : readme.content;
 
   return (
-    <Card
-      className={cn(
-        "p-4",
-        isCyberpunk
-          ? "bg-[var(--cyber-panel)] border-[var(--cyber-border)]"
-          : "border-2 border-border"
-      )}
-    >
+    <Card className="p-4 t-card-static">
       <div className="flex gap-4">
         {/* Vote buttons */}
         <VoteButton
@@ -80,18 +71,8 @@ export function ReadmeCard({ readme, userVote }: ReadmeCardProps) {
           {/* Header */}
           <div className="flex items-start justify-between gap-4 mb-3">
             <div className="flex items-center gap-2">
-              <FileText
-                className={cn(
-                  "h-5 w-5",
-                  isCyberpunk ? "text-[var(--cyber-purple)]" : "text-primary"
-                )}
-              />
-              <h3
-                className={cn(
-                  "text-lg font-bold",
-                  isCyberpunk ? "text-white" : "text-foreground"
-                )}
-              >
+              <FileText className="h-5 w-5 t-text-accent" />
+              <h3 className="text-lg font-bold t-text-primary">
                 {readme.title || "Untitled README"}
               </h3>
             </div>
@@ -112,30 +93,18 @@ export function ReadmeCard({ readme, userVote }: ReadmeCardProps) {
             </Link>
             <Link
               href={`/profile/${readme.author.intraLogin}`}
-              className={cn(
-                "text-sm font-medium hover:underline",
-                isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-foreground"
-              )}
+              className="text-sm font-medium hover:underline t-text-accent"
             >
               {readme.author.displayName || readme.author.intraLogin}
             </Link>
-            <span className={cn("text-xs", isCyberpunk ? "text-gray-500" : "text-muted-foreground")}>
-              •
-            </span>
-            <span className={cn("text-xs", isCyberpunk ? "text-gray-500" : "text-muted-foreground")}>
+            <span className="text-xs t-text-subtle">•</span>
+            <span className="text-xs t-text-subtle">
               {formatDistanceToNow(new Date(readme.createdAt), { addSuffix: true })}
             </span>
           </div>
 
           {/* Markdown content */}
-          <div
-            className={cn(
-              "prose prose-sm max-w-none",
-              isCyberpunk
-                ? "prose-invert prose-headings:text-white prose-p:text-gray-300 prose-a:text-[var(--cyber-cyan)] prose-code:text-[var(--cyber-purple)] prose-code:bg-[var(--cyber-dark)] prose-pre:bg-[var(--cyber-dark)]"
-                : "prose-headings:text-foreground prose-p:text-foreground"
-            )}
-          >
+          <div className="prose prose-sm max-w-none t-prose">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {isExpanded ? readme.content : previewContent}
             </ReactMarkdown>
@@ -147,12 +116,7 @@ export function ReadmeCard({ readme, userVote }: ReadmeCardProps) {
               variant="ghost"
               size="sm"
               onClick={() => setIsExpanded(!isExpanded)}
-              className={cn(
-                "mt-3 h-8",
-                isCyberpunk
-                  ? "text-[var(--cyber-cyan)] hover:text-[var(--cyber-cyan)] hover:bg-[var(--cyber-cyan)]/10"
-                  : "text-primary hover:text-primary"
-              )}
+              className="mt-3 h-8 t-expand-btn"
             >
               {isExpanded ? (
                 <>

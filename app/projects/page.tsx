@@ -139,9 +139,8 @@ export default function ProjectsPage() {
     return (
       <div className="min-h-[80vh] flex items-center justify-center">
         <Loader2
-          className={`h-12 w-12 animate-spin ${
-            isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-primary"
-          }`}
+          className={`h-12 w-12 animate-spin ${isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-primary"
+            }`}
         />
       </div>
     );
@@ -199,9 +198,8 @@ export default function ProjectsPage() {
       {/* Header */}
       <div className="mb-8">
         <h1
-          className={`text-4xl font-display font-black uppercase mb-2 ${
-            isCyberpunk ? "cyber-gradient-text" : "text-foreground"
-          }`}
+          className={`text-4xl font-display font-black uppercase mb-2 ${isCyberpunk ? "cyber-gradient-text" : "text-foreground"
+            }`}
         >
           42 Projects
         </h1>
@@ -212,19 +210,17 @@ export default function ProjectsPage() {
 
       {/* Controls */}
       <div
-        className={`flex flex-col md:flex-row gap-4 mb-8 p-4 ${
-          isCyberpunk
+        className={`flex flex-col md:flex-row gap-4 mb-8 p-4 ${isCyberpunk
             ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)]"
             : "bg-card border-2 border-border manga-shadow"
-        }`}
+          }`}
       >
         {/* Search */}
         <div className="flex-1">
           <div className="relative">
             <svg
-              className={`absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 ${
-                isCyberpunk ? "text-gray-500" : "text-muted-foreground"
-              }`}
+              className={`absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 ${isCyberpunk ? "text-gray-500" : "text-muted-foreground"
+                }`}
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -241,11 +237,10 @@ export default function ProjectsPage() {
               placeholder="Search projects..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className={`pl-10 ${
-                isCyberpunk
+              className={`pl-10 ${isCyberpunk
                   ? "bg-[var(--cyber-dark)] border-[var(--cyber-border)] focus:border-[var(--cyber-cyan)]"
                   : "border-2 border-border"
-              }`}
+                }`}
             />
           </div>
         </div>
@@ -273,18 +268,16 @@ export default function ProjectsPage() {
       {/* Loading state */}
       {loading && (
         <div
-          className={`text-center py-20 ${
-            isCyberpunk
+          className={`text-center py-20 ${isCyberpunk
               ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)]"
               : "bg-card border-2 border-border manga-shadow"
-          }`}
+            }`}
         >
           <div
-            className={`w-12 h-12 border-4 rounded-full animate-spin mx-auto mb-4 ${
-              isCyberpunk
+            className={`w-12 h-12 border-4 rounded-full animate-spin mx-auto mb-4 ${isCyberpunk
                 ? "border-[var(--cyber-cyan)] border-t-transparent"
                 : "border-foreground border-t-transparent"
-            }`}
+              }`}
           />
           <p className={`font-mono ${isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-foreground"}`}>
             Loading projects...
@@ -295,11 +288,10 @@ export default function ProjectsPage() {
       {/* Error state */}
       {error && !loading && (
         <div
-          className={`text-center py-20 ${
-            isCyberpunk
+          className={`text-center py-20 ${isCyberpunk
               ? "bg-[var(--cyber-panel)] border border-red-500/50"
               : "bg-card border-2 border-destructive manga-shadow"
-          }`}
+            }`}
         >
           <div className="text-4xl mb-4">⚠️</div>
           <h3 className={`text-xl font-display font-bold mb-2 ${isCyberpunk ? "text-white" : "text-foreground"}`}>
@@ -329,20 +321,17 @@ export default function ProjectsPage() {
             {projectsByCircle.map(({ circle, label, projects: circleProjects }) => (
               <div
                 key={circle}
-                className={`border-l-4 ${circleColors[circle] || "border-l-gray-500"} ${
-                  isCyberpunk ? "bg-[var(--cyber-panel)]/50" : "bg-card/50"
-                }`}
+                className={`border-l-4 ${circleColors[circle] || "border-l-gray-500"} ${isCyberpunk ? "bg-[var(--cyber-panel)]/50" : "bg-card/50"
+                  }`}
               >
                 {/* Circle header */}
                 <div
-                  className={`px-4 py-3 border-b ${
-                    isCyberpunk ? "border-[var(--cyber-border)]" : "border-border"
-                  }`}
+                  className={`px-4 py-3 border-b ${isCyberpunk ? "border-[var(--cyber-border)]" : "border-border"
+                    }`}
                 >
                   <h2
-                    className={`text-xl font-display font-bold uppercase ${
-                      isCyberpunk ? "text-white" : "text-foreground"
-                    }`}
+                    className={`text-xl font-display font-bold uppercase ${isCyberpunk ? "text-white" : "text-foreground"
+                      }`}
                   >
                     {label}
                     <span className={`ml-2 text-sm font-normal ${isCyberpunk ? "text-gray-500" : "text-muted-foreground"}`}>
@@ -357,17 +346,15 @@ export default function ProjectsPage() {
                     {circleProjects.map((project) => (
                       <Link href={`/projects/${project.slug}`} key={project.id}>
                         <Card
-                          className={`p-4 w-64 shrink-0 transition-all cursor-pointer hover:scale-105 ${
-                            isCyberpunk
+                          className={`p-4 w-64 shrink-0 transition-all cursor-pointer hover:scale-105 ${isCyberpunk
                               ? "bg-[var(--cyber-dark)] border border-[var(--cyber-border)] hover:border-[var(--cyber-cyan)] hover:shadow-[0_0_20px_rgba(0,255,255,0.2)]"
                               : "border-2 border-border hover:manga-shadow"
-                          }`}
+                            }`}
                         >
                           <div className="flex items-start justify-between gap-2 mb-2">
                             <h3
-                              className={`font-display font-bold text-sm uppercase leading-tight ${
-                                isCyberpunk ? "text-white" : "text-foreground"
-                              }`}
+                              className={`font-display font-bold text-sm uppercase leading-tight ${isCyberpunk ? "text-white" : "text-foreground"
+                                }`}
                             >
                               {project.title}
                             </h3>
@@ -379,9 +366,8 @@ export default function ProjectsPage() {
                             </Badge>
                           </div>
                           <div
-                            className={`flex gap-3 text-xs ${
-                              isCyberpunk ? "text-gray-500" : "text-muted-foreground"
-                            }`}
+                            className={`flex gap-3 text-xs ${isCyberpunk ? "text-gray-500" : "text-muted-foreground"
+                              }`}
                           >
                             <span>📝 {project._count.posts}</span>
                             <span>💬 {project._count.comments}</span>
@@ -398,11 +384,10 @@ export default function ProjectsPage() {
           {/* Empty state */}
           {projectsByCircle.length === 0 && (
             <div
-              className={`text-center py-20 ${
-                isCyberpunk
+              className={`text-center py-20 ${isCyberpunk
                   ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)]"
                   : "bg-card border-2 border-border manga-shadow"
-              }`}
+                }`}
             >
               <div className={`text-6xl mb-4 ${isCyberpunk ? "text-gray-700" : "text-muted-foreground/30"}`}>
                 📚

@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { VoteButton } from "./vote-button";
 import { formatDistanceToNow } from "date-fns";
-import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import { MessageSquare, Send, X } from "lucide-react";
@@ -41,6 +40,7 @@ interface CommentProps {
 /**
  * Recursive comment component with voting and reply functionality.
  * Renders nested replies up to depth 5.
+ * Uses CSS-only theme styling for performance.
  */
 export function Comment({
   comment,
@@ -49,8 +49,6 @@ export function Comment({
   onReplyAdded,
   depth = 0,
 }: CommentProps) {
-  const { theme } = useTheme();
-  const isCyberpunk = theme === "cyberpunk";
   const { authenticated, login } = useAuth();
 
   const [showReplyForm, setShowReplyForm] = useState(false);
@@ -100,10 +98,7 @@ export function Comment({
     <div
       className={cn(
         "group",
-        depth > 0 &&
-          (isCyberpunk
-            ? "border-l-2 border-[var(--cyber-border)] pl-4 ml-2"
-            : "border-l-2 border-border pl-4 ml-2")
+        depth > 0 && "border-l-2 t-border pl-4 ml-2"
       )}
     >
       <div className="flex gap-3">
@@ -134,23 +129,18 @@ export function Comment({
             </Link>
             <Link
               href={`/profile/${comment.author.intraLogin}`}
-              className={cn(
-                "text-sm font-medium hover:underline",
-                isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-foreground"
-              )}
+              className="text-sm font-medium hover:underline t-text-accent"
             >
               {comment.author.displayName || comment.author.intraLogin}
             </Link>
-            <span className={cn("text-xs", isCyberpunk ? "text-gray-500" : "text-muted-foreground")}>
-              •
-            </span>
-            <span className={cn("text-xs", isCyberpunk ? "text-gray-500" : "text-muted-foreground")}>
+            <span className="text-xs t-text-subtle">•</span>
+            <span className="text-xs t-text-subtle">
               {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
             </span>
           </div>
 
           {/* Content */}
-          <p className={cn("text-sm whitespace-pre-wrap break-words", isCyberpunk ? "text-gray-300" : "text-foreground")}>
+          <p className="text-sm whitespace-pre-wrap break-words t-text-primary">
             {comment.content}
           </p>
 
@@ -168,12 +158,7 @@ export function Comment({
                     }
                     setShowReplyForm(true);
                   }}
-                  className={cn(
-                    "h-7 px-2 text-xs",
-                    isCyberpunk
-                      ? "text-gray-500 hover:text-[var(--cyber-cyan)] hover:bg-[var(--cyber-cyan)]/10"
-                      : "text-muted-foreground hover:text-foreground"
-                  )}
+                  className="h-7 px-2 text-xs t-reply-btn"
                 >
                   <MessageSquare className="h-3 w-3 mr-1" />
                   Reply
@@ -184,20 +169,14 @@ export function Comment({
                     placeholder="Write a reply..."
                     value={replyContent}
                     onChange={(e) => setReplyContent(e.target.value)}
-                    className={cn(
-                      "min-h-[80px] text-sm",
-                      isCyberpunk && "bg-[var(--cyber-dark)] border-[var(--cyber-border)]"
-                    )}
+                    className="min-h-[80px] text-sm"
                   />
                   <div className="flex gap-2">
                     <Button
                       size="sm"
                       onClick={handleSubmitReply}
                       disabled={!replyContent.trim() || isSubmitting}
-                      className={cn(
-                        "h-7",
-                        isCyberpunk && "bg-[var(--cyber-cyan)] text-black hover:bg-[var(--cyber-cyan)]/80"
-                      )}
+                      className="h-7 t-submit-btn"
                     >
                       <Send className="h-3 w-3 mr-1" />
                       {isSubmitting ? "Posting..." : "Reply"}

@@ -25,40 +25,48 @@
   --cyber-purple: #bc13fe;
   --cyber-green: #0aff68;
 
-  /* Active theme colors (mapped to manga by default) */
-  --background: var(--manga-paper);
-  --foreground: var(--manga-ink);
-  --card: #FFFFFF;
-  --card-foreground: var(--manga-ink);
-  --popover: #FFFFFF;
-  --popover-foreground: var(--manga-ink);
-  --primary: var(--manga-ink);
-  --primary-foreground: var(--manga-paper);
-  --secondary: var(--manga-paper-dark);
-  --secondary-foreground: var(--manga-ink);
-  --muted: var(--manga-paper-dark);
-  --muted-foreground: var(--manga-gray);
-  --accent: var(--manga-ink-light);
-  --accent-foreground: var(--manga-paper);
-  --destructive: #8B0000;
-  --destructive-foreground: #ffffff;
-  --border: var(--manga-ink);
-  --input: var(--manga-paper);
-  --ring: var(--manga-ink);
-  --chart-1: var(--manga-ink);
-  --chart-2: var(--manga-gray);
-  --chart-3: var(--manga-gray-light);
-  --chart-4: #4a4a4a;
-  --chart-5: #2a2a2a;
-  --radius: 0;
-  --sidebar: var(--manga-paper);
-  --sidebar-foreground: var(--manga-ink);
-  --sidebar-primary: var(--manga-ink);
-  --sidebar-primary-foreground: var(--manga-paper);
-  --sidebar-accent: var(--manga-paper-dark);
-  --sidebar-accent-foreground: var(--manga-ink);
-  --sidebar-border: var(--manga-ink);
-  --sidebar-ring: var(--manga-ink);
+  /* Status Colors - Manga (Default) */
+  --status-in-progress: #1d4ed8;
+  /* blue-700 */
+  --status-in-progress-bg: #eff6ff;
+  /* blue-50 */
+  --status-in-progress-border: #bfdbfe;
+  /* blue-200 */
+
+  --status-searching: #7e22ce;
+  /* purple-700 */
+  --status-searching-bg: #faf5ff;
+  /* purple-50 */
+  --status-searching-border: #e9d5ff;
+  /* purple-200 */
+
+  --status-waiting: #c2410c;
+  /* orange-700 */
+  --status-waiting-bg: #fff7ed;
+  /* orange-50 */
+  --status-waiting-border: #fed7aa;
+  /* orange-200 */
+
+  --status-neutral: #4b5563;
+  /* gray-600 */
+  --status-neutral-bg: #f9fafb;
+  /* gray-50 */
+  --status-neutral-border: #e5e7eb;
+  /* gray-200 */
+
+  --status-success: #15803d;
+  /* green-700 */
+  --status-success-bg: #f0fdf4;
+  /* green-50 */
+  --status-success-border: #bbf7d0;
+  /* green-200 */
+
+  --status-dev-fail: #b91c1c;
+  /* red-700 */
+  --status-dev-fail-bg: #fef2f2;
+  /* red-50 */
+  --status-dev-fail-border: #fecaca;
+  /* red-200 */
 }
 
 /* ===== MANGA THEME (explicit) ===== */
@@ -95,6 +103,32 @@
   --sidebar-accent-foreground: var(--manga-ink);
   --sidebar-border: var(--manga-ink);
   --sidebar-ring: var(--manga-ink);
+
+  /* Status Colors - Manga Explicit */
+  --status-in-progress: #1d4ed8;
+  --status-in-progress-bg: #eff6ff;
+  --status-in-progress-border: #bfdbfe;
+
+  --status-searching: #7e22ce;
+  --status-searching-bg: #faf5ff;
+  --status-searching-border: #e9d5ff;
+
+  --status-waiting: #c2410c;
+  --status-waiting-bg: #fff7ed;
+  --status-waiting-border: #fed7aa;
+
+  --status-neutral: #4b5563;
+  --status-neutral-bg: #f9fafb;
+  --status-neutral-border: #e5e7eb;
+
+  --status-success: #15803d;
+  --status-success-bg: #f0fdf4;
+  --status-success-border: #bbf7d0;
+
+  --status-dev-fail: #b91c1c;
+  --status-dev-fail-bg: #fef2f2;
+  --status-dev-fail-border: #fecaca;
+
 
   /* Global Manga Font Override */
   --font-sans: var(--font-manga);
@@ -137,6 +171,33 @@
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: var(--cyber-border);
   --sidebar-ring: var(--cyber-cyan);
+
+  /* Status Colors - Cyberpunk */
+  --status-in-progress: var(--cyber-cyan);
+  --status-in-progress-bg: rgba(0, 240, 255, 0.1);
+  --status-in-progress-border: rgba(0, 240, 255, 0.3);
+
+  --status-searching: var(--cyber-purple);
+  --status-searching-bg: rgba(188, 19, 254, 0.1);
+  --status-searching-border: rgba(188, 19, 254, 0.3);
+
+  --status-waiting: #fb923c;
+  /* orange-400 */
+  --status-waiting-bg: rgba(249, 115, 22, 0.1);
+  --status-waiting-border: rgba(249, 115, 22, 0.3);
+
+  --status-neutral: #9ca3af;
+  /* gray-400 */
+  --status-neutral-bg: rgba(107, 114, 128, 0.1);
+  --status-neutral-border: rgba(107, 114, 128, 0.3);
+
+  --status-success: var(--cyber-green);
+  --status-success-bg: rgba(10, 255, 104, 0.1);
+  --status-success-border: rgba(10, 255, 104, 0.3);
+
+  --status-dev-fail: #ef4444;
+  --status-dev-fail-bg: rgba(239, 68, 68, 0.1);
+  --status-dev-fail-border: rgba(239, 68, 68, 0.3);
 }
 
 @theme inline {
@@ -193,6 +254,31 @@
   --color-cyber-purple: var(--cyber-purple);
   --color-cyber-green: var(--cyber-green);
 
+  /* Status Colors */
+  --color-status-in-progress: var(--status-in-progress);
+  --color-status-in-progress-bg: var(--status-in-progress-bg);
+  --color-status-in-progress-border: var(--status-in-progress-border);
+
+  --color-status-searching: var(--status-searching);
+  --color-status-searching-bg: var(--status-searching-bg);
+  --color-status-searching-border: var(--status-searching-border);
+
+  --color-status-waiting: var(--status-waiting);
+  --color-status-waiting-bg: var(--status-waiting-bg);
+  --color-status-waiting-border: var(--status-waiting-border);
+
+  --color-status-neutral: var(--status-neutral);
+  --color-status-neutral-bg: var(--status-neutral-bg);
+  --color-status-neutral-border: var(--status-neutral-border);
+
+  --color-status-success: var(--status-success);
+  --color-status-success-bg: var(--status-success-bg);
+  --color-status-success-border: var(--status-success-border);
+
+  --color-status-dev-fail: var(--status-dev-fail);
+  --color-status-dev-fail-bg: var(--status-dev-fail-bg);
+  --color-status-dev-fail-border: var(--status-dev-fail-border);
+
   /* Legacy color mappings */
   --color-cyan-500: var(--cyber-cyan);
   --color-purple-500: var(--cyber-purple);
@@ -209,12 +295,30 @@
 }
 
 @layer base {
-  * {
+
+  /* Restricted transition to specific elements for performance instead of * */
+  body,
+  a,
+  button,
+  input,
+  textarea,
+  select,
+  .card,
+  .manga-panel,
+  .cyber-button,
+  .theme-shadow-hover {
     @apply border-border outline-ring/50;
+    transition: background-color 0.3s ease,
+      border-color 0.3s ease,
+      color 0.3s ease,
+      box-shadow 0.3s ease,
+      fill 0.3s ease,
+      stroke 0.3s ease;
   }
 
   body {
     @apply bg-background text-foreground;
+    /* transition is already handled by * selector but good to keep specific */
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
@@ -225,9 +329,6 @@
   }
 }
 
-/* ===== MANGA THEME BODY STYLES ===== */
-/* ===== MANGA THEME BODY STYLES ===== */
-/* ===== MANGA THEME BODY STYLES ===== */
 [data-theme="manga"] body,
 :root:not([data-theme]) body {
   background-color: var(--manga-paper);
@@ -255,6 +356,7 @@
 
   /* Animate clouds drifting slowly */
   animation: manga-cloud-drift 60s linear infinite alternate;
+  will-change: opacity;
 }
 
 /* Activate manga layer when theme is manga */
@@ -272,9 +374,10 @@
   left: 0;
   width: 100%;
   height: 100%;
+  /* background-image: url("data:image/svg+xml..."); REMOVED for performance */
+  /* Using simple grain effect or just transparency instead */
   opacity: 0.03;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
 @keyframes manga-cloud-drift {
@@ -390,6 +493,7 @@
 
   /* Animate the grid to scroll */
   animation: cyber-grid-scroll 20s linear infinite;
+  will-change: opacity;
 }
 
 /* Activate cyber layer when theme is cyberpunk */
@@ -406,10 +510,10 @@
   width: 100%;
   height: 100%;
   background:
-    radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.15) 0%, transparent 40%),
-    radial-gradient(circle at 80% 20%, rgba(188, 19, 254, 0.15) 0%, transparent 40%),
-    radial-gradient(circle at 20% 80%, rgba(10, 255, 104, 0.1) 0%, transparent 40%);
-  filter: blur(60px);
+    radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.15) 0%, transparent 60%),
+    radial-gradient(circle at 80% 20%, rgba(188, 19, 254, 0.15) 0%, transparent 60%),
+    radial-gradient(circle at 20% 80%, rgba(10, 255, 104, 0.1) 0%, transparent 60%);
+  /* filter: blur(60px); REMOVED for performance */
   animation: pulse-glow 6s ease-in-out infinite alternate;
 }
 
@@ -426,7 +530,9 @@
       transparent 1px,
       rgba(0, 240, 255, 0.03) 2px,
       rgba(0, 240, 255, 0.03) 3px);
-  backdrop-filter: contrast(120%) brightness(110%);
+  /* backdrop-filter: contrast(120%) brightness(110%); REMOVED for performance */
+  background-color: rgba(0, 0, 0, 0.1);
+  /* Fallback overlay */
   opacity: 0.4;
   pointer-events: none;
 }
@@ -1404,4 +1510,665 @@
 
 [data-theme="cyberpunk"] .scroll-paper.scroll-decoration::before {
   background: none;
+}
+
+/* ===== THEME-AWARE UTILITY CLASSES FOR CSS-ONLY THEMING ===== */
+/* These classes enable theme switching without JS re-renders */
+
+/* === Text Colors === */
+.t-text-primary {
+  color: var(--foreground);
+}
+
+[data-theme="cyberpunk"] .t-text-primary {
+  color: #ffffff;
+}
+
+.t-text-muted {
+  color: var(--muted-foreground);
+}
+
+[data-theme="cyberpunk"] .t-text-muted {
+  color: #9ca3af;
+}
+
+.t-text-subtle {
+  color: var(--muted-foreground);
+}
+
+[data-theme="cyberpunk"] .t-text-subtle {
+  color: #6b7280;
+}
+
+.t-text-accent {
+  color: var(--foreground);
+}
+
+[data-theme="cyberpunk"] .t-text-accent {
+  color: var(--cyber-cyan);
+}
+
+.t-text-accent-hover:hover {
+  text-decoration: underline;
+}
+
+[data-theme="cyberpunk"] .t-text-accent-hover:hover {
+  color: var(--cyber-cyan);
+  text-decoration: none;
+}
+
+/* === Background Colors === */
+.t-bg-panel {
+  background-color: var(--card);
+}
+
+[data-theme="cyberpunk"] .t-bg-panel {
+  background-color: var(--cyber-panel);
+}
+
+.t-bg-secondary {
+  background-color: var(--secondary);
+}
+
+[data-theme="cyberpunk"] .t-bg-secondary {
+  background-color: rgba(17, 17, 24, 0.5);
+}
+
+.t-bg-icon {
+  background-color: var(--background);
+}
+
+[data-theme="cyberpunk"] .t-bg-icon {
+  background-color: #1f2937;
+}
+
+/* === Border Colors === */
+.t-border {
+  border-color: var(--border);
+}
+
+[data-theme="cyberpunk"] .t-border {
+  border-color: var(--cyber-border);
+}
+
+.t-border-hover:hover {
+  border-color: var(--border);
+}
+
+[data-theme="cyberpunk"] .t-border-hover:hover {
+  border-color: var(--cyber-cyan);
+}
+
+/* === Card Styles === */
+.t-card {
+  background-color: var(--card);
+  border: 2px solid var(--border);
+}
+
+[data-theme="cyberpunk"] .t-card {
+  background-color: var(--cyber-panel);
+  border: 1px solid var(--cyber-border);
+}
+
+[data-theme="cyberpunk"] .t-card:hover {
+  border-color: var(--cyber-cyan);
+}
+
+/* Card without hover effect */
+.t-card-static {
+  background-color: var(--card);
+  border: 2px solid var(--border);
+}
+
+[data-theme="cyberpunk"] .t-card-static {
+  background-color: var(--cyber-panel);
+  border: 1px solid var(--cyber-border);
+}
+
+/* === Interactive Card Styles === */
+.t-card-interactive {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+[data-theme="manga"] .t-card-interactive:hover,
+:root:not([data-theme]) .t-card-interactive:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 8px 8px 0px 0px var(--manga-ink);
+}
+
+[data-theme="cyberpunk"] .t-card-interactive:hover {
+  border-color: var(--cyber-cyan);
+}
+
+/* === Status Badge Styles === */
+.t-badge-recruiting {
+  background-color: rgba(139, 0, 0, 0.1);
+  color: var(--manga-seal);
+  border-color: rgba(139, 0, 0, 0.3);
+}
+
+[data-theme="cyberpunk"] .t-badge-recruiting {
+  background-color: rgba(0, 240, 255, 0.1);
+  color: var(--cyber-cyan);
+  border-color: rgba(0, 240, 255, 0.3);
+}
+
+.t-badge-active {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+[data-theme="cyberpunk"] .t-badge-active {
+  background-color: rgba(10, 255, 104, 0.1);
+  color: var(--cyber-green);
+  border-color: rgba(10, 255, 104, 0.3);
+}
+
+.t-badge-beta {
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+}
+
+[data-theme="cyberpunk"] .t-badge-beta {
+  background-color: rgba(188, 19, 254, 0.1);
+  color: var(--cyber-purple);
+  border-color: rgba(188, 19, 254, 0.3);
+}
+
+.t-badge-creation {
+  background-color: transparent;
+  border: 1px solid var(--border);
+}
+
+[data-theme="cyberpunk"] .t-badge-creation {
+  background-color: rgba(234, 179, 8, 0.1);
+  color: #eab308;
+  border-color: rgba(234, 179, 8, 0.3);
+}
+
+/* === Vote Button Styles === */
+.t-vote-up {
+  color: var(--muted-foreground);
+}
+
+.t-vote-up:hover {
+  color: var(--primary);
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="cyberpunk"] .t-vote-up:hover {
+  color: var(--cyber-cyan);
+  background-color: rgba(0, 240, 255, 0.1);
+}
+
+.t-vote-up-active {
+  color: var(--primary);
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="cyberpunk"] .t-vote-up-active {
+  color: var(--cyber-cyan);
+  background-color: rgba(0, 240, 255, 0.2);
+}
+
+.t-score-positive {
+  color: #16a34a;
+}
+
+[data-theme="cyberpunk"] .t-score-positive {
+  color: var(--cyber-cyan);
+}
+
+.t-score-zero {
+  color: var(--muted-foreground);
+}
+
+[data-theme="cyberpunk"] .t-score-zero {
+  color: #6b7280;
+}
+
+/* === Icon Box Styles === */
+.t-icon-box {
+  background-color: var(--background);
+  border: 2px solid var(--border);
+}
+
+[data-theme="cyberpunk"] .t-icon-box {
+  background-color: #1f2937;
+  border: 2px solid var(--cyber-cyan);
+}
+
+.t-icon-box-subtle {
+  background-color: var(--background);
+  border: 2px solid var(--border);
+}
+
+[data-theme="cyberpunk"] .t-icon-box-subtle {
+  background-color: #1f2937;
+  border: 2px solid #374151;
+}
+
+/* === Progress Bar Styles === */
+.t-progress-track {
+  background-color: var(--secondary);
+  border: 2px solid var(--border);
+}
+
+[data-theme="cyberpunk"] .t-progress-track {
+  background-color: #1f2937;
+  border: none;
+}
+
+.t-progress-fill {
+  background-color: var(--foreground);
+}
+
+[data-theme="cyberpunk"] .t-progress-fill {
+  background-color: var(--cyber-cyan);
+}
+
+/* === Accent Line Styles === */
+.t-accent-line {
+  background-color: var(--primary);
+}
+
+[data-theme="cyberpunk"] .t-accent-line {
+  background: linear-gradient(to right, var(--cyber-cyan), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.5s;
+}
+
+[data-theme="cyberpunk"] .group:hover .t-accent-line {
+  transform: translateX(0);
+}
+
+/* === Stat Box Styles === */
+.t-stat-box {
+  background-color: var(--secondary);
+  border: 2px solid var(--border);
+}
+
+[data-theme="cyberpunk"] .t-stat-box {
+  background-color: rgba(17, 17, 24, 0.5);
+  border: 2px solid #1f2937;
+}
+
+/* === Tech Tag Styles === */
+.t-tech-tag {
+  border: 2px solid var(--border);
+  color: var(--foreground);
+}
+
+[data-theme="cyberpunk"] .t-tech-tag {
+  border-color: #374151;
+  color: #9ca3af;
+}
+
+/* === Nav Styles === */
+.t-nav {
+  background-color: var(--card);
+  border-bottom: 2px solid var(--border);
+}
+
+[data-theme="cyberpunk"] .t-nav {
+  background-color: rgba(10, 10, 15, 0.9);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--cyber-border);
+}
+
+.t-nav-link {
+  color: var(--muted-foreground);
+  border: 2px solid transparent;
+}
+
+.t-nav-link:hover {
+  color: var(--foreground);
+  border-color: var(--border);
+}
+
+[data-theme="cyberpunk"] .t-nav-link {
+  border-width: 1px;
+}
+
+[data-theme="cyberpunk"] .t-nav-link:hover {
+  color: #ffffff;
+  border-color: var(--cyber-border);
+}
+
+.t-nav-link-active {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+[data-theme="cyberpunk"] .t-nav-link-active {
+  background-color: rgba(0, 240, 255, 0.2);
+  border-color: var(--cyber-cyan);
+  color: var(--cyber-cyan);
+}
+
+/* === Tier Color Styles === */
+.t-tier-0 {
+  color: var(--muted-foreground);
+}
+
+[data-theme="cyberpunk"] .t-tier-0 {
+  color: #9ca3af;
+}
+
+.t-tier-1 {
+  color: #15803d;
+}
+
+[data-theme="cyberpunk"] .t-tier-1 {
+  color: var(--cyber-green);
+}
+
+.t-tier-2 {
+  color: #1d4ed8;
+}
+
+[data-theme="cyberpunk"] .t-tier-2 {
+  color: var(--cyber-cyan);
+}
+
+.t-tier-3 {
+  color: #7e22ce;
+}
+
+[data-theme="cyberpunk"] .t-tier-3 {
+  color: var(--cyber-purple);
+}
+
+.t-tier-4 {
+  color: #c2410c;
+}
+
+[data-theme="cyberpunk"] .t-tier-4 {
+  color: #fb923c;
+}
+
+.t-tier-5 {
+  color: #b91c1c;
+}
+
+[data-theme="cyberpunk"] .t-tier-5 {
+  color: #f87171;
+}
+
+/* === Logo Display Toggle === */
+.t-logo-manga {
+  display: block;
+}
+
+[data-theme="cyberpunk"] .t-logo-manga {
+  display: none;
+}
+
+.t-logo-cyber {
+  display: none;
+}
+
+[data-theme="cyberpunk"] .t-logo-cyber {
+  display: block;
+}
+
+/* === Brand Text === */
+.t-brand-text {
+  font-family: var(--font-manga), cursive;
+  font-size: 1.875rem;
+  letter-spacing: 0.1em;
+  color: var(--foreground);
+}
+
+[data-theme="cyberpunk"] .t-brand-text {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  letter-spacing: 0.05em;
+  color: #ffffff;
+}
+
+/* === Avatar Styles === */
+.t-avatar {
+  box-shadow: 4px 4px 0px 0px var(--border);
+}
+
+[data-theme="cyberpunk"] .t-avatar {
+  box-shadow: none;
+  border: 1px solid #4b5563;
+}
+
+.t-avatar-fallback {
+  background-color: var(--secondary);
+}
+
+[data-theme="cyberpunk"] .t-avatar-fallback {
+  background-color: #374151;
+  border: 1px solid #4b5563;
+}
+
+/* === Loading Placeholder === */
+.t-loading-placeholder {
+  background-color: var(--muted);
+  border: 2px solid var(--border);
+}
+
+[data-theme="cyberpunk"] .t-loading-placeholder {
+  background-color: #374151;
+  border: none;
+}
+
+/* === Logout Button === */
+.t-logout-btn {
+  color: var(--muted-foreground);
+}
+
+.t-logout-btn:hover {
+  color: var(--destructive);
+}
+
+[data-theme="cyberpunk"] .t-logout-btn {
+  color: #9ca3af;
+}
+
+[data-theme="cyberpunk"] .t-logout-btn:hover {
+  color: #f87171;
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* === Login Button === */
+.t-login-btn {
+  /* Inherits from button variant */
+  transition: all 0.2s ease;
+}
+
+[data-theme="cyberpunk"] .t-login-btn {
+  background-color: transparent;
+  border: 1px solid var(--cyber-cyan);
+  color: var(--cyber-cyan);
+}
+
+[data-theme="cyberpunk"] .t-login-btn:hover {
+  background-color: var(--cyber-cyan);
+  color: #000000;
+}
+
+/* === Hero Section Styles === */
+.t-hero-logo {
+  background-color: var(--card);
+  border: 4px solid var(--border);
+  box-shadow: 6px 6px 0px 0px var(--border);
+  color: var(--foreground);
+}
+
+[data-theme="cyberpunk"] .t-hero-logo {
+  background-color: var(--cyber-panel);
+  border: 2px solid var(--cyber-cyan);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+  color: var(--cyber-cyan);
+}
+
+.t-hero-title {
+  color: var(--foreground);
+}
+
+[data-theme="cyberpunk"] .t-hero-title {
+  background: linear-gradient(135deg, var(--cyber-cyan) 0%, var(--cyber-purple) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.t-hero-button {
+  /* Manga: uses manga-button-action class */
+  position: relative;
+  background: var(--manga-ink);
+  color: var(--manga-paper);
+  border: 3px solid var(--manga-ink);
+  box-shadow: 8px 8px 0px var(--manga-gray);
+  clip-path: polygon(2% 0%, 100% 0%, 100% 90%, 95% 100%, 0% 100%, 0% 10%);
+}
+
+.t-hero-button:hover {
+  transform: scale(1.05) rotate(-1deg);
+  box-shadow: 12px 12px 0px var(--manga-ink);
+  background: var(--manga-paper);
+  color: var(--manga-ink);
+}
+
+[data-theme="cyberpunk"] .t-hero-button {
+  background: rgba(5, 5, 10, 0.7);
+  color: var(--cyber-cyan);
+  border: 2px solid var(--cyber-cyan);
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.15);
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 92% 100%, 0 100%);
+}
+
+[data-theme="cyberpunk"] .t-hero-button:hover {
+  transform: none;
+  background: var(--cyber-cyan);
+  color: #000000;
+  box-shadow: 0 0 30px rgba(0, 240, 255, 0.6);
+}
+
+/* === Comment Styles === */
+.t-reply-btn {
+  color: var(--muted-foreground);
+}
+
+.t-reply-btn:hover {
+  color: var(--foreground);
+}
+
+[data-theme="cyberpunk"] .t-reply-btn {
+  color: #6b7280;
+}
+
+[data-theme="cyberpunk"] .t-reply-btn:hover {
+  color: var(--cyber-cyan);
+  background-color: rgba(0, 240, 255, 0.1);
+}
+
+.t-submit-btn {
+  /* Inherits from button, adds transition */
+  transition: all 0.2s ease;
+}
+
+[data-theme="cyberpunk"] .t-submit-btn {
+  background-color: var(--cyber-cyan);
+  color: #000000;
+}
+
+[data-theme="cyberpunk"] .t-submit-btn:hover {
+  background-color: rgba(0, 240, 255, 0.8);
+}
+
+/* === Readme Card Styles === */
+.t-prose {
+  /* Prose styling with theme inheritance */
+  transition: color 0.2s ease;
+}
+
+.t-prose h1,
+.t-prose h2,
+.t-prose h3,
+.t-prose h4,
+.t-prose h5,
+.t-prose h6 {
+  color: var(--foreground);
+}
+
+.t-prose p,
+.t-prose li {
+  color: var(--foreground);
+}
+
+[data-theme="cyberpunk"] .t-prose h1,
+[data-theme="cyberpunk"] .t-prose h2,
+[data-theme="cyberpunk"] .t-prose h3,
+[data-theme="cyberpunk"] .t-prose h4,
+[data-theme="cyberpunk"] .t-prose h5,
+[data-theme="cyberpunk"] .t-prose h6 {
+  color: #ffffff;
+}
+
+[data-theme="cyberpunk"] .t-prose p,
+[data-theme="cyberpunk"] .t-prose li {
+  color: #d1d5db;
+}
+
+[data-theme="cyberpunk"] .t-prose a {
+  color: var(--cyber-cyan);
+}
+
+[data-theme="cyberpunk"] .t-prose code {
+  color: var(--cyber-purple);
+  background-color: var(--cyber-dark);
+}
+
+[data-theme="cyberpunk"] .t-prose pre {
+  background-color: var(--cyber-dark);
+}
+
+.t-expand-btn {
+  color: var(--primary);
+}
+
+.t-expand-btn:hover {
+  color: var(--primary);
+}
+
+[data-theme="cyberpunk"] .t-expand-btn {
+  color: var(--cyber-cyan);
+}
+
+[data-theme="cyberpunk"] .t-expand-btn:hover {
+  color: var(--cyber-cyan);
+  background-color: rgba(0, 240, 255, 0.1);
+}
+
+.t-badge-completed {
+  background-color: rgba(34, 197, 94, 0.1);
+  color: #15803d;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+[data-theme="cyberpunk"] .t-badge-completed {
+  background-color: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.t-markdown-preview {
+  /* Markdown preview with theme inheritance */
+  transition: color 0.2s ease;
+}
+
+[data-theme="cyberpunk"] .t-markdown-preview {
+  color: #d1d5db;
+}
+
+[data-theme="cyberpunk"] .t-markdown-preview h1,
+[data-theme="cyberpunk"] .t-markdown-preview h2,
+[data-theme="cyberpunk"] .t-markdown-preview h3 {
+  color: #ffffff;
 }

@@ -1,11 +1,9 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { VoteButton } from "./vote-button";
 import { formatDistanceToNow } from "date-fns";
-import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import { ChevronDown, FileText, CheckCircle2 } from "lucide-react";
@@ -41,10 +39,9 @@ interface ReadmePreviewCardProps {
 /**
  * README preview card showing snippet with voting.
  * Clicking anywhere on the card navigates to the full README page.
+ * Uses CSS-only theme styling for performance.
  */
 export function ReadmePreviewCard({ readme, userVote, projectSlug }: ReadmePreviewCardProps) {
-  const { theme } = useTheme();
-  const isCyberpunk = theme === "cyberpunk";
   const { login } = useAuth();
 
   // Truncate content for preview (first 300 characters)
@@ -56,14 +53,7 @@ export function ReadmePreviewCard({ readme, userVote, projectSlug }: ReadmePrevi
 
   return (
     <Link href={`/projects/${projectSlug}/readmes/${readme.id}`} className="block">
-      <Card
-        className={cn(
-          "p-5 transition-all cursor-pointer",
-          isCyberpunk
-            ? "bg-[var(--cyber-panel)] border-[var(--cyber-border)] hover:border-[var(--cyber-cyan)]"
-            : "border-2 border-border hover:manga-shadow"
-        )}
-      >
+      <Card className="p-5 cursor-pointer t-card t-card-interactive">
         <div className="flex gap-4">
           {/* Vote buttons - stop propagation to prevent card navigation */}
           <div onClick={(e) => e.preventDefault()} className="shrink-0">
@@ -83,29 +73,14 @@ export function ReadmePreviewCard({ readme, userVote, projectSlug }: ReadmePrevi
             {/* Header */}
             <div className="flex items-start justify-between gap-4 mb-3">
               <div className="flex items-center gap-2">
-                <FileText
-                  className={cn(
-                    "h-5 w-5 shrink-0",
-                    isCyberpunk ? "text-[var(--cyber-purple)]" : "text-primary"
-                  )}
-                />
-                <h3
-                  className={cn(
-                    "text-lg font-bold",
-                    isCyberpunk ? "text-white" : "text-foreground"
-                  )}
-                >
+                <FileText className="h-5 w-5 shrink-0 t-text-accent" />
+                <h3 className="text-lg font-bold t-text-primary">
                   {readme.title || "Untitled README"}
                 </h3>
               </div>
               {readme.hasCompleted && (
                 <div
-                  className={cn(
-                    "flex items-center gap-1 px-2 py-1 rounded text-xs font-bold shrink-0",
-                    isCyberpunk
-                      ? "bg-green-500/20 text-green-400 border border-green-500/30"
-                      : "bg-green-50 text-green-700 border border-green-200"
-                  )}
+                  className="flex items-center gap-1 px-2 py-1 rounded text-xs font-bold shrink-0 t-badge-completed"
                   title="User has completed this project"
                 >
                   <CheckCircle2 className="h-3 w-3" />
@@ -130,39 +105,25 @@ export function ReadmePreviewCard({ readme, userVote, projectSlug }: ReadmePrevi
               <Link
                 href={`/profile/${readme.author.intraLogin}`}
                 onClick={(e) => e.stopPropagation()}
-                className={cn(
-                  "text-sm font-medium hover:underline",
-                  isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-foreground"
-                )}
+                className="text-sm font-medium hover:underline t-text-accent"
               >
                 {readme.author.displayName || readme.author.intraLogin}
               </Link>
-              <span className={cn("text-xs", isCyberpunk ? "text-gray-500" : "text-muted-foreground")}>
-                •
-              </span>
-              <span className={cn("text-xs", isCyberpunk ? "text-gray-500" : "text-muted-foreground")}>
+              <span className="text-xs t-text-subtle">•</span>
+              <span className="text-xs t-text-subtle">
                 {formatDistanceToNow(new Date(readme.createdAt), { addSuffix: true })}
               </span>
               {readme.updatedAt !== readme.createdAt && (
                 <>
-                  <span className={cn("text-xs", isCyberpunk ? "text-gray-500" : "text-muted-foreground")}>
-                    •
-                  </span>
-                  <span className={cn("text-xs italic", isCyberpunk ? "text-gray-500" : "text-muted-foreground")}>
-                    edited
-                  </span>
+                  <span className="text-xs t-text-subtle">•</span>
+                  <span className="text-xs italic t-text-subtle">edited</span>
                 </>
               )}
             </div>
 
             {/* Markdown preview */}
-            {/* Markdown preview */}
             <div
-              className={cn(
-                "mb-3 line-clamp-4",
-                "markdown-body",
-                isCyberpunk ? "markdown-cyberpunk" : ""
-              )}
+              className="mb-3 line-clamp-4 markdown-body t-markdown-preview"
               style={{ backgroundColor: 'transparent' }}
             >
               <ReactMarkdown remarkPlugins={[remarkGfm]}>
@@ -172,10 +133,7 @@ export function ReadmePreviewCard({ readme, userVote, projectSlug }: ReadmePrevi
 
             {/* View full README indicator */}
             {needsTruncation && (
-              <div className={cn(
-                "flex items-center gap-1 mt-3 text-sm",
-                isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-primary"
-              )}>
+              <div className="flex items-center gap-1 mt-3 text-sm t-text-accent">
                 <ChevronDown className="h-4 w-4" />
                 <span className="font-medium">Click to read full README</span>
               </div>

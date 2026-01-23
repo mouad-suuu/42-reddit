@@ -4,7 +4,6 @@ import { useState, useCallback } from "react";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
-import { useTheme } from "@/contexts/ThemeContext";
 
 interface VoteButtonProps {
   targetType: "POST" | "COMMENT";
@@ -19,6 +18,7 @@ interface VoteButtonProps {
 /**
  * Upvote/downvote button with optimistic updates.
  * Displays score and allows voting on posts or comments.
+ * Uses CSS-only theme styling for performance.
  */
 export function VoteButton({
   targetType,
@@ -30,8 +30,6 @@ export function VoteButton({
   readOnly = false,
 }: VoteButtonProps) {
   const { authenticated } = useAuth();
-  const { theme } = useTheme();
-  const isCyberpunk = theme === "cyberpunk";
 
   const [score, setScore] = useState(initialScore);
   const [userVote, setUserVote] = useState<number | undefined>(initialUserVote);
@@ -117,12 +115,8 @@ export function VoteButton({
           buttonSize,
           readOnly ? "cursor-default" : "cursor-pointer",
           userVote === 1
-            ? isCyberpunk
-              ? "text-[var(--cyber-cyan)] bg-[var(--cyber-cyan)]/20"
-              : "text-primary bg-primary/10 animate-vote-pop" // Added animation
-            : isCyberpunk
-              ? "text-gray-500 hover:text-[var(--cyber-cyan)] hover:bg-[var(--cyber-cyan)]/10"
-              : "text-muted-foreground hover:text-primary hover:bg-primary/10",
+            ? "t-vote-up-active animate-vote-pop"
+            : "t-vote-up",
           (isLoading || readOnly) && "hover:bg-transparent hover:text-inherit"
         )}
         aria-label="Upvote"
@@ -135,14 +129,10 @@ export function VoteButton({
           "font-mono font-bold tabular-nums",
           fontSize,
           score > 0
-            ? isCyberpunk
-              ? "text-[var(--cyber-cyan)]"
-              : "text-green-600"
+            ? "t-score-positive"
             : score < 0
               ? "text-destructive"
-              : isCyberpunk
-                ? "text-gray-500"
-                : "text-muted-foreground"
+              : "t-score-zero"
         )}
       >
         {score}
@@ -156,10 +146,8 @@ export function VoteButton({
           buttonSize,
           readOnly ? "cursor-default" : "cursor-pointer",
           userVote === -1
-            ? "text-destructive bg-destructive/20 animate-vote-pop" // Added animation
-            : isCyberpunk
-              ? "text-gray-500 hover:text-destructive hover:bg-destructive/10"
-              : "text-muted-foreground hover:text-destructive hover:bg-destructive/10",
+            ? "text-destructive bg-destructive/20 animate-vote-pop"
+            : "text-muted-foreground hover:text-destructive hover:bg-destructive/10",
           (isLoading || readOnly) && "hover:bg-transparent hover:text-inherit"
         )}
         aria-label="Downvote"

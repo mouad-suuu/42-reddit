@@ -7,22 +7,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { useTheme } from "@/contexts/ThemeContext";
 import { cn } from "@/lib/utils";
 import { FolderOpen, User, LogOut, LayoutDashboard } from "lucide-react";
 
 /**
  * Client-side navigation header with auth state and navigation links.
  * Shows different nav items based on auth status.
+ * Uses CSS-only theme styling for performance.
  */
 export function NavHeaderClient() {
   const { user, authenticated, loading, logout } = useAuth();
-  const { theme } = useTheme();
   const pathname = usePathname();
-
-  const logoSrc =
-    theme === "cyberpunk" ? "/Praxis_cyberpunk.png" : "/Praxis_manga.png";
-  const isCyberpunk = theme === "cyberpunk";
 
   const isAdmin = user?.profile?.role === "ADMIN";
 
@@ -37,33 +32,30 @@ export function NavHeaderClient() {
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
 
   return (
-    <nav
-      className={cn(
-        "sticky top-0 z-40 border-b transition-colors duration-300",
-        isCyberpunk
-          ? "bg-[var(--cyber-dark)]/90 backdrop-blur-md border-[var(--cyber-border)]"
-          : "bg-card border-b-2 border-border"
-      )}
-    >
+    <nav className="sticky top-0 z-40 t-nav">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center cursor-pointer group">
             <div className="mr-3 flex items-center">
+              {/* Manga logo - shown by default, hidden in cyberpunk */}
               <Image
-                src={logoSrc}
+                src="/Praxis_manga.png"
                 alt="Logo"
                 width={64}
                 height={64}
-                className="object-contain w-12 h-12 transition-opacity duration-300 group-hover:opacity-80"
+                className="object-contain w-12 h-12 group-hover:opacity-80 transition-opacity t-logo-manga"
+              />
+              {/* Cyberpunk logo - hidden by default, shown in cyberpunk */}
+              <Image
+                src="/Praxis_cyberpunk.png"
+                alt="Logo"
+                width={64}
+                height={64}
+                className="object-contain w-12 h-12 group-hover:opacity-80 transition-opacity t-logo-cyber"
               />
             </div>
-            <span
-              className={cn(
-                "font-bold tracking-wider",
-                isCyberpunk ? "font-display text-2xl text-white" : "font-manga text-3xl tracking-widest text-foreground"
-              )}
-            >
+            <span className="font-bold tracking-wider t-brand-text">
               42 Reddit
             </span>
           </Link>
@@ -83,19 +75,7 @@ export function NavHeaderClient() {
                   href={link.href}
                   className={cn(
                     "flex items-center gap-2 px-4 py-2 text-sm font-bold uppercase tracking-wider transition-all",
-                    isCyberpunk
-                      ? cn(
-                        "border border-transparent",
-                        active
-                          ? "bg-[var(--cyber-cyan)]/20 border-[var(--cyber-cyan)] text-[var(--cyber-cyan)]"
-                          : "text-gray-400 hover:text-white hover:border-[var(--cyber-border)]"
-                      )
-                      : cn(
-                        "border-2 border-transparent",
-                        active
-                          ? "bg-primary text-primary-foreground"
-                          : "text-muted-foreground hover:text-foreground hover:border-border"
-                      )
+                    active ? "t-nav-link-active" : "t-nav-link"
                   )}
                 >
                   <Icon className="h-4 w-4" />
@@ -110,31 +90,16 @@ export function NavHeaderClient() {
             <ThemeToggle />
 
             {loading ? (
-              <div
-                className={cn(
-                  "h-9 w-9 animate-pulse rounded",
-                  isCyberpunk ? "bg-gray-700" : "bg-muted border-2 border-border"
-                )}
-              />
+              <div className="h-9 w-9 animate-pulse rounded t-loading-placeholder" />
             ) : authenticated && user ? (
               <div className="flex items-center gap-3">
                 {/* User info (desktop) */}
                 <div className="hidden lg:flex flex-col items-end">
-                  <span
-                    className={cn(
-                      "text-sm font-medium",
-                      isCyberpunk ? "text-white" : "text-foreground"
-                    )}
-                  >
+                  <span className="text-sm font-medium t-text-primary">
                     {user.profile?.displayName || user.username}
                   </span>
                   {user.profile?.campus && (
-                    <span
-                      className={cn(
-                        "text-xs",
-                        isCyberpunk ? "text-gray-400" : "text-muted-foreground"
-                      )}
-                    >
+                    <span className="text-xs t-text-muted">
                       {user.profile.campus}
                     </span>
                   )}
@@ -142,21 +107,12 @@ export function NavHeaderClient() {
 
                 {/* Avatar link to profile */}
                 <Link href="/profile">
-                  <Avatar
-                    className={cn(
-                      "h-9 w-9 cursor-pointer transition-transform hover:scale-105",
-                      isCyberpunk
-                        ? "border border-gray-600 overflow-hidden"
-                        : "theme-shadow-sm"
-                    )}
-                  >
+                  <Avatar className="h-9 w-9 cursor-pointer transition-transform hover:scale-105 t-avatar">
                     <AvatarImage
                       src={user.profile?.avatarUrl || "/placeholder.svg"}
                       alt={user.profile?.displayName || user.username}
                     />
-                    <AvatarFallback
-                      className={isCyberpunk ? "bg-gray-700 border border-gray-600" : undefined}
-                    >
+                    <AvatarFallback className="t-avatar-fallback">
                       {(user.profile?.intraLogin || user.username)?.slice(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
@@ -167,12 +123,7 @@ export function NavHeaderClient() {
                   variant="ghost"
                   size="sm"
                   onClick={logout}
-                  className={cn(
-                    "h-9 w-9 p-0",
-                    isCyberpunk
-                      ? "text-gray-400 hover:text-red-400 hover:bg-red-500/10"
-                      : "text-muted-foreground hover:text-destructive"
-                  )}
+                  className="h-9 w-9 p-0 t-logout-btn"
                   title="Logout"
                 >
                   <LogOut className="h-4 w-4" />
@@ -181,11 +132,8 @@ export function NavHeaderClient() {
             ) : (
               <Button
                 asChild
-                className={cn(
-                  isCyberpunk &&
-                  "bg-transparent border border-[var(--cyber-cyan)] text-[var(--cyber-cyan)] hover:bg-[var(--cyber-cyan)] hover:text-black px-4 py-1.5 text-sm font-bold uppercase tracking-wider transition-all"
-                )}
-                variant={isCyberpunk ? undefined : "outline"}
+                className="t-login-btn"
+                variant="outline"
                 size="sm"
               >
                 <Link href="/api/auth/42">LOGIN WITH 42</Link>
@@ -209,19 +157,7 @@ export function NavHeaderClient() {
                   href={link.href}
                   className={cn(
                     "flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all",
-                    isCyberpunk
-                      ? cn(
-                        "border",
-                        active
-                          ? "bg-[var(--cyber-cyan)]/20 border-[var(--cyber-cyan)] text-[var(--cyber-cyan)]"
-                          : "border-[var(--cyber-border)] text-gray-400"
-                      )
-                      : cn(
-                        "border-2",
-                        active
-                          ? "bg-primary text-primary-foreground border-primary"
-                          : "border-border text-muted-foreground"
-                      )
+                    active ? "t-nav-link-active" : "t-nav-link"
                   )}
                 >
                   <Icon className="h-3 w-3" />
