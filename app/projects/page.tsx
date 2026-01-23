@@ -211,8 +211,8 @@ export default function ProjectsPage() {
       {/* Controls */}
       <div
         className={`flex flex-col md:flex-row gap-4 mb-8 p-4 ${isCyberpunk
-            ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)]"
-            : "bg-card border-2 border-border manga-shadow"
+          ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)]"
+          : "bg-card border-2 border-border manga-shadow"
           }`}
       >
         {/* Search */}
@@ -238,8 +238,8 @@ export default function ProjectsPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className={`pl-10 ${isCyberpunk
-                  ? "bg-[var(--cyber-dark)] border-[var(--cyber-border)] focus:border-[var(--cyber-cyan)]"
-                  : "border-2 border-border"
+                ? "bg-[var(--cyber-dark)] border-[var(--cyber-border)] focus:border-[var(--cyber-cyan)]"
+                : "border-2 border-border"
                 }`}
             />
           </div>
@@ -269,14 +269,14 @@ export default function ProjectsPage() {
       {loading && (
         <div
           className={`text-center py-20 ${isCyberpunk
-              ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)]"
-              : "bg-card border-2 border-border manga-shadow"
+            ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)]"
+            : "bg-card border-2 border-border manga-shadow"
             }`}
         >
           <div
             className={`w-12 h-12 border-4 rounded-full animate-spin mx-auto mb-4 ${isCyberpunk
-                ? "border-[var(--cyber-cyan)] border-t-transparent"
-                : "border-foreground border-t-transparent"
+              ? "border-[var(--cyber-cyan)] border-t-transparent"
+              : "border-foreground border-t-transparent"
               }`}
           />
           <p className={`font-mono ${isCyberpunk ? "text-[var(--cyber-cyan)]" : "text-foreground"}`}>
@@ -289,8 +289,8 @@ export default function ProjectsPage() {
       {error && !loading && (
         <div
           className={`text-center py-20 ${isCyberpunk
-              ? "bg-[var(--cyber-panel)] border border-red-500/50"
-              : "bg-card border-2 border-destructive manga-shadow"
+            ? "bg-[var(--cyber-panel)] border border-red-500/50"
+            : "bg-card border-2 border-destructive manga-shadow"
             }`}
         >
           <div className="text-4xl mb-4">⚠️</div>
@@ -321,52 +321,63 @@ export default function ProjectsPage() {
             {projectsByCircle.map(({ circle, label, projects: circleProjects }) => (
               <div
                 key={circle}
-                className={`border-l-4 ${circleColors[circle] || "border-l-gray-500"} ${isCyberpunk ? "bg-[var(--cyber-panel)]/50" : "bg-card/50"
+                className={`transition-all duration-300 ${isCyberpunk
+                    ? "border-l-4 " + (circleColors[circle] || "border-l-gray-500") + " bg-[var(--cyber-panel)]/50"
+                    : "relative bg-white border-4 border-black shadow-[8px_8px_0px_0px_black] overflow-visible mb-12"
                   }`}
+                style={!isCyberpunk ? {
+                  backgroundImage: "radial-gradient(#000 1px, transparent 1px)",
+                  backgroundSize: "20px 20px"
+                } : {}}
               >
                 {/* Circle header */}
                 <div
-                  className={`px-4 py-3 border-b ${isCyberpunk ? "border-[var(--cyber-border)]" : "border-border"
+                  className={`${isCyberpunk
+                      ? "px-4 py-3 border-b border-[var(--cyber-border)]"
+                      : "absolute -top-5 -left-3 bg-black text-white px-6 py-2 transform -skew-x-12 border-2 border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] z-10"
                     }`}
                 >
                   <h2
-                    className={`text-xl font-display font-bold uppercase ${isCyberpunk ? "text-white" : "text-foreground"
+                    className={`text-xl font-display font-black uppercase ${isCyberpunk ? "text-white" : "text-white tracking-widest"
                       }`}
                   >
                     {label}
-                    <span className={`ml-2 text-sm font-normal ${isCyberpunk ? "text-gray-500" : "text-muted-foreground"}`}>
-                      ({circleProjects.length} project{circleProjects.length !== 1 ? "s" : ""})
+                    <span className={`ml-3 text-sm font-bold ${isCyberpunk ? "text-gray-500 font-normal" : "bg-white text-black px-2 py-0.5 transform skew-x-12 inline-block"}`}>
+                      {isCyberpunk ? `(${circleProjects.length} projects)` : circleProjects.length}
                     </span>
                   </h2>
                 </div>
 
                 {/* Projects in this circle - horizontal scroll */}
-                <div className="p-4 overflow-x-auto">
-                  <div className="flex gap-4" style={{ minWidth: "min-content" }}>
+                <div className={`${isCyberpunk ? "p-4" : "p-8 pt-10"} overflow-x-auto`}>
+                  <div className="flex gap-6" style={{ minWidth: "min-content" }}>
                     {circleProjects.map((project) => (
                       <Link href={`/projects/${project.slug}`} key={project.id}>
                         <Card
-                          className={`p-4 w-64 shrink-0 transition-all cursor-pointer hover:scale-105 ${isCyberpunk
-                              ? "bg-[var(--cyber-dark)] border border-[var(--cyber-border)] hover:border-[var(--cyber-cyan)] hover:shadow-[0_0_20px_rgba(0,255,255,0.2)]"
-                              : "border-2 border-border hover:manga-shadow"
+                          className={`w-64 shrink-0 transition-all cursor-pointer ${isCyberpunk
+                              ? "p-4 bg-[var(--cyber-dark)] border border-[var(--cyber-border)] hover:border-[var(--cyber-cyan)] hover:shadow-[0_0_20px_rgba(0,255,255,0.2)] hover:scale-105"
+                              : "p-4 border-2 border-black bg-white rounded-none hover:bg-black hover:text-white hover:shadow-[8px_8px_0px_0px_black] hover:-translate-y-2 group"
                             }`}
                         >
-                          <div className="flex items-start justify-between gap-2 mb-2">
+                          <div className="flex items-start justify-between gap-2 mb-3">
                             <h3
-                              className={`font-display font-bold text-sm uppercase leading-tight ${isCyberpunk ? "text-white" : "text-foreground"
+                              className={`font-display font-bold text-sm uppercase leading-tight ${isCyberpunk ? "text-white" : "text-black group-hover:text-white"
                                 }`}
                             >
                               {project.title}
                             </h3>
                             <Badge
                               variant="outline"
-                              className={`text-xs shrink-0 ${categoryConfig[project.category].color} ${categoryConfig[project.category].bgColor}`}
+                              className={`text-xs shrink-0 ${isCyberpunk
+                                  ? categoryConfig[project.category].color + " " + categoryConfig[project.category].bgColor
+                                  : "border-black text-black bg-transparent group-hover:border-white group-hover:text-white rounded-none"
+                                }`}
                             >
                               {categoryConfig[project.category].label}
                             </Badge>
                           </div>
                           <div
-                            className={`flex gap-3 text-xs ${isCyberpunk ? "text-gray-500" : "text-muted-foreground"
+                            className={`flex gap-3 text-xs font-bold ${isCyberpunk ? "text-gray-500" : "text-gray-600 group-hover:text-gray-300"
                               }`}
                           >
                             <span>📝 {project._count.posts}</span>
@@ -385,8 +396,8 @@ export default function ProjectsPage() {
           {projectsByCircle.length === 0 && (
             <div
               className={`text-center py-20 ${isCyberpunk
-                  ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)]"
-                  : "bg-card border-2 border-border manga-shadow"
+                ? "bg-[var(--cyber-panel)] border border-[var(--cyber-border)]"
+                : "bg-card border-2 border-border manga-shadow"
                 }`}
             >
               <div className={`text-6xl mb-4 ${isCyberpunk ? "text-gray-700" : "text-muted-foreground/30"}`}>
