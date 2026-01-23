@@ -1336,8 +1336,69 @@ html.theme-transitioning-to-cyberpunk #theme-transition-overlay {
 }
 
 /* ===== GITHUB MARKDOWN OVERRIDES ===== */
-/* Ensure readability in Cyberpunk/Dark themes if system preference doesn't match */
+/* Ensure readability in both themes */
 
+/* Manga theme - dark text on light paper background */
+.markdown-body,
+[data-theme="manga"] .markdown-body {
+  color: #1f2328 !important;
+  /* GitHub Light text color */
+  background-color: transparent !important;
+}
+
+[data-theme="manga"] .markdown-body h1,
+[data-theme="manga"] .markdown-body h2,
+[data-theme="manga"] .markdown-body h3,
+[data-theme="manga"] .markdown-body h4,
+[data-theme="manga"] .markdown-body h5,
+[data-theme="manga"] .markdown-body h6 {
+  color: #1f2328 !important;
+  border-bottom-color: #d0d7de !important;
+}
+
+[data-theme="manga"] .markdown-body p,
+[data-theme="manga"] .markdown-body li,
+[data-theme="manga"] .markdown-body strong,
+[data-theme="manga"] .markdown-body em,
+[data-theme="manga"] .markdown-body td,
+[data-theme="manga"] .markdown-body th {
+  color: #1f2328 !important;
+}
+
+[data-theme="manga"] .markdown-body a {
+  color: #0969da !important;
+}
+
+[data-theme="manga"] .markdown-body pre {
+  background-color: #f6f8fa !important;
+  border: 1px solid #d0d7de !important;
+}
+
+[data-theme="manga"] .markdown-body code {
+  background-color: rgba(175, 184, 193, 0.2) !important;
+  color: #1f2328 !important;
+}
+
+[data-theme="manga"] .markdown-body blockquote {
+  color: #656d76 !important;
+  border-left-color: #d0d7de !important;
+}
+
+[data-theme="manga"] .markdown-body table tr {
+  background-color: #ffffff !important;
+  border-color: #d0d7de !important;
+}
+
+[data-theme="manga"] .markdown-body table tr:nth-child(2n) {
+  background-color: #f6f8fa !important;
+}
+
+[data-theme="manga"] .markdown-body table td,
+[data-theme="manga"] .markdown-body table th {
+  border-color: #d0d7de !important;
+}
+
+/* Cyberpunk theme - light text on dark background */
 [data-theme="cyberpunk"] .markdown-body {
   color: #e6edf3 !important;
   /* GitHub Dark text color */
