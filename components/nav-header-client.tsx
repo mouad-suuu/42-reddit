@@ -37,7 +37,7 @@ export function NavHeaderClient() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center cursor-pointer group">
-            <div className="mr-3 flex items-center">
+            <div className="mr-3 flex items-center relative">
               {/* Manga logo - shown by default, hidden in cyberpunk */}
               <Image
                 src="/Praxis_manga.png"

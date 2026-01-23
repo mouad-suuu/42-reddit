@@ -310,11 +310,7 @@ export default function ProjectsPage() {
       {/* Projects by Circle */}
       {!loading && !error && (
         <>
-          {/* Results count */}
-          <div className={`mb-6 text-sm font-mono ${isCyberpunk ? "text-gray-500" : "text-muted-foreground"}`}>
-            {totalProjects} project{totalProjects !== 1 ? "s" : ""} in {projectsByCircle.length} circle
-            {projectsByCircle.length !== 1 ? "s" : ""}
-          </div>
+
 
           {/* Circle rows */}
           <div className="space-y-8">
