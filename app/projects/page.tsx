@@ -350,8 +350,8 @@ export default function ProjectsPage() {
                     >
                       {displayLabel}
                       <span className={`text-sm font-bold flex items-center justify-center ${isCyberpunk
-                        ? "text-gray-500 font-normal"
-                        : "bg-white text-black min-w-[24px] h-6 px-1 transform skew-x-12"
+                        ? "text-gray-100 font-normal text-xl"
+                        : "text-white text-xl h-6 px-1 transform skew-x-12"
                         }`}
                       >
                         {badgeContent}

@@ -308,13 +308,57 @@
   }
 }
 
-/* Disable all transitions during theme switch for instant change */
-html.theme-switching,
-html.theme-switching *,
-html.theme-switching *::before,
-html.theme-switching *::after {
-  transition-duration: 0s !important;
-  transition-delay: 0s !important;
+/* Theme transition wipe animation - top to bottom */
+@keyframes theme-wipe-down {
+  0% {
+    transform: translateY(-100%);
+  }
+
+  100% {
+    transform: translateY(0%);
+  }
+}
+
+@keyframes theme-wipe-exit {
+  0% {
+    transform: translateY(0%);
+  }
+
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+/* Theme transition overlay */
+#theme-transition-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 99999;
+  pointer-events: none;
+  transform: translateY(-100%);
+}
+
+/* Transitioning to manga (light) - dark overlay wipes down then reveals light */
+html.theme-transitioning-to-manga #theme-transition-overlay {
+  background: linear-gradient(to bottom,
+      #0a0a0f 0%,
+      #0a0a0f 50%,
+      #1a1a2e 100%);
+  animation: theme-wipe-down 0.3s ease-out forwards,
+    theme-wipe-exit 0.3s ease-in 0.3s forwards;
+}
+
+/* Transitioning to cyberpunk (dark) - light overlay wipes down then reveals dark */
+html.theme-transitioning-to-cyberpunk #theme-transition-overlay {
+  background: linear-gradient(to bottom,
+      #f5f0e6 0%,
+      #f5f0e6 50%,
+      #e8e0d0 100%);
+  animation: theme-wipe-down 0.3s ease-out forwards,
+    theme-wipe-exit 0.3s ease-in 0.3s forwards;
 }
 
 [data-theme="manga"] body,

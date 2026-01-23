@@ -76,6 +76,9 @@ export default function RootLayout({
           <div id="bg-layer-cyber" className="absolute inset-0 transition-opacity duration-500 ease-in-out opacity-0" />
         </div>
 
+        {/* Theme transition overlay for wipe animation */}
+        <div id="theme-transition-overlay" />
+
         <div className="min-h-screen flex flex-col relative overflow-x-hidden">
           <ThemeProvider>
             <AuthProvider>
